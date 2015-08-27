@@ -35,15 +35,13 @@ var getBreweryInfo = function() {
   //set up URL for Ajax request
   var theCity = "Boston, MA";
   var theQuery = "brewery";
-  var theURL = "https://api.foursquare.com/v2/venues/search?client_id=V5XZKQRSRXGVGCGN5U3YIFCXTIAZWCZA01V3U5ICI4KRNXOX&client_secret=0ATJHEHUGP41GLOHJJS4ACJC3ENKG311BRW2KR510Y2FPSPY&v=20130815&ll=42.3600825,-71.05888010000001&radius=100000&categoryId=50327c8591d4c4b30a586d5d";
+  var theURL = "https://api.foursquare.com/v2/venues/explore?client_id=V5XZKQRSRXGVGCGN5U3YIFCXTIAZWCZA01V3U5ICI4KRNXOX&client_secret=0ATJHEHUGP41GLOHJJS4ACJC3ENKG311BRW2KR510Y2FPSPY&v=20130815&ll=40.7,-74&query=" + theQuery + "&near=" + theCity;
 
   $.getJSON(theURL, function(data){
       //get JSON and assign to KO ObservableArray
-      console.log(data.response.venues);
-      var breweryData = data.response.venues;
+      var breweryData = data.response.groups[0].items;
       self.brewDataFailed(false);
       self.breweryInfo(breweryData);
-      console.log(breweryData);
 
   }).error(function(e) {
     self.faultReason("Sorry, we were not able to load the data");
@@ -61,9 +59,9 @@ var setUpMarkers = function(data, failed) {
     if (failed === false) {
       for (i = 0; i < data.length; i++) {
         markerArr.push( new google.maps.Marker({
-          position: {lat: data[i].location.lat, lng: data[i].location.lng},
+          position: {lat: data[i].venue.location.lat, lng: data[i].venue.location.lng},
           map: map,
-          title: data[i].name
+          title: data[i].venue.name
           }));
       }
     }
@@ -91,7 +89,7 @@ var beerMapViewModel = function() {
     return setMarkers;
 
   }, this);
-
+ 
 
 
 
