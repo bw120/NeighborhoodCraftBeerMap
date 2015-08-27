@@ -1,60 +1,59 @@
-//map functions
+//Initialize and set up map
 var map;
+var theLocation = "42.3600825, -71.05888010000001";
 
-  var initMap = function() {
+var initMap = function() {
 
-    var bounds = new google.maps.LatLng(42.3600825, -71.05888010000001);
-    var mapOptions = {
-      zoom: 14,
-      center: bounds,
-      mapTypeControl: false,
-      zoomControl: true,
-      zoomControlOptions: {
-        style: google.maps.ZoomControlStyle.SMALL,
-        position: google.maps.ControlPosition.RIGHT_BOTTOM
-
-      },
-      panControl: true,
-      panControlOptions: {
-
-        position: google.maps.ControlPosition.RIGHT_BOTTOM
-
-      }
+  var bounds = new google.maps.LatLng(42.3600825, -71.05888010000001);
+  var mapOptions = {
+    zoom: 13,
+    center: bounds,
+    mapTypeControl: false,
+    zoomControl: true,
+    zoomControlOptions: {
+      style: google.maps.ZoomControlStyle.SMALL,
+      position: google.maps.ControlPosition.RIGHT_BOTTOM
+    },
+    panControl: true,
+    panControlOptions: {
+      position: google.maps.ControlPosition.RIGHT_BOTTOM
     }
-    map = new google.maps.Map(document.getElementById("map"), mapOptions);
-  };
+  }
+  map = new google.maps.Map(document.getElementById("map"), mapOptions);
+};
 
 
-///function for getting and manipulating brewery data
+///get brewery data from Foursquare
 var getBreweryInfo = function() {
   var self = this;
   self.breweryInfo = ko.observableArray();
   self.brewDataFailed = ko.observable(true);
   self.faultReason = ko.observable("Loading data...");
-  var categoryID = "50327c8591d4c4b30a586d5d";
+
 
   //set up URL for Ajax request
-  var theCity = "Boston, MA";
-  var theQuery = "brewery";
-  var theURL = "https://api.foursquare.com/v2/venues/search?client_id=V5XZKQRSRXGVGCGN5U3YIFCXTIAZWCZA01V3U5ICI4KRNXOX&client_secret=0ATJHEHUGP41GLOHJJS4ACJC3ENKG311BRW2KR510Y2FPSPY&v=20130815&ll=42.3600825,-71.05888010000001&categoryId="+ categoryID + " &intent=browse&radius=100000";
+  var categoryID = "50327c8591d4c4b30a586d5d";
+  var radius = "100000";
+  var theURL = "https://api.foursquare.com/v2/venues/search?client_id=V5XZKQRSRXGVGCGN5U3YIFCXTIAZWCZA01V3U5ICI4KRNXOX&client_secret=0ATJHEHUGP41GLOHJJS4ACJC3ENKG311BRW2KR510Y2FPSPY&v=20130815&ll=" + theLocation + " &categoryId="+ categoryID + " &intent=browse&radius=" + radius;
 
   //send AJAX request
   $.getJSON(theURL, function(data){
       var breweryData = data.response.venues;
+      var brewArr = [];
 
-      //Foursquare API search with categoryID still gives a few venues not in that category. 
+      //Foursquare API search by categoryID still gives a few venues not in that category. 
       //So here we have to remove what we don't want.
       for (i = 0; i < breweryData.length; i++) {
-        if (data.response.venues[i].categories[0].id != categoryID) {
-          breweryData.splice(i, 1);
-        }
+        if (breweryData[i].categories[0].id === categoryID) {
+          brewArr.push(breweryData[i]);
+        }        
       }
 
       //confirm the ajax search brough up results and set variable to show ajax request was successful 
       //and post results to obserable. Otherwise log fault.
-      if (breweryData.length > 0) {
+      if (brewArr.length > 0) {
         self.brewDataFailed(false);
-        self.breweryInfo(breweryData);
+        self.breweryInfo(brewArr);   
       } else {
         self.faultReason("Sorry, we were not able to find any breweries");
       }
