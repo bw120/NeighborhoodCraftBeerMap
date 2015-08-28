@@ -77,15 +77,40 @@ var setUpMarkers = function(data, failed) {
         markerArr.push( new google.maps.Marker({
           position: {lat: data[i].location.lat, lng: data[i].location.lng},
           map: map,
-          title: data[i].name
+          title: String(i) //set title as the key in breweryInfo array so it is easier to pass into map InfoWindow
           }));
       }
     }
-
     return markerArr;
-
 };
 
+//set content for map info window
+var markerConent = function(data) {
+  var content = "<div class='infoWindow'><div class='venueName'>" + data.name + "</div><span class='address'>" + 
+  data.location.address + "<br />" + data.location.city + ", " + data.location.state + " " + data.location.postalCode + " </span></div>";
+  return content;
+};
+
+//open info window
+var openInfoWindow = function(data, marker) {
+    infowindow.setContent(markerConent(data[marker.getTitle()]));
+    infowindow.open(map, marker);
+};
+
+//setup map info window and add event listner
+var infowindow;
+var setUpInfoWindows = function(data, markers, failed) {
+    var self = this;
+
+    //make sure data has loaded then setup markers
+    if (failed === false && markers().length > 0) {
+      infowindow = new google.maps.InfoWindow();
+      
+      for (var i = 0; i < markers().length; i++) {
+        google.maps.event.addListener(markers()[i], 'click', function(e) {openInfoWindow(data, this);});
+      }    
+    }
+};
 
 // Knockout ViewModel
 var beerMapViewModel = function() {
@@ -96,20 +121,25 @@ var beerMapViewModel = function() {
   self.brewData = ko.observable( new getBreweryInfo() );
 
   //put markers on the map
-  var setMarkers;
-  //set up markers in a computed observable so that it gets caluclated when ajax data becomes available since it is async
+  //used a computed observable so that it gets caluclated when ajax data becomes available
   self.setMarkers = ko.computed(function() {
-    setMarkers = setUpMarkers(self.brewData().breweryInfo(), self.brewData().brewDataFailed());
+    var markers = setUpMarkers(self.brewData().breweryInfo(), self.brewData().brewDataFailed());
     //set up observable array of markers so we can control them later
-    self.mapMarkers = ko.observableArray(setMarkers);
-    return setMarkers;
-
+    self.mapMarkers = ko.observableArray(markers);
   }, this);
 
+  //set up info windows
+  self.infoWindows = ko.computed(function() {
+    var iWindows = setUpInfoWindows(self.brewData().breweryInfo(), self.mapMarkers, self.brewData().brewDataFailed());
+  });
+    
+//pass info from interface to openInfoWindow()
+  this.openWindow = function(data) {
+   openInfoWindow(self.brewData().breweryInfo(), self.mapMarkers()[self.brewData().breweryInfo().indexOf(data)]);
+  };
 
-
-
-setTimeout(function(){console.log(self.mapMarkers()[1].map);}, 4000);
+//setTimeout(function(){console.log(self.mapMarkers()[1]);}, 4000);
+//setTimeout(function(){openInfoWindow(self.brewData().breweryInfo(), self.mapMarkers()[3]);}, 4000);
 
 
 

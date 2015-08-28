@@ -64,3 +64,13 @@ input {
 	font-style: italic;
 	color: gray;
 }
+
+.infoWindow {
+	color: #FF3300;
+}
+.venueName {
+	font-weight: strong;
+}
+.address {
+	color: black;
+}
