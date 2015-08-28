@@ -54,6 +54,7 @@ var markerConent = function(data) {
 var openInfoWindow = function(data, marker) {
     infowindow.setContent(markerConent(data[marker.getTitle()]));
     infowindow.open(map, marker);
+    map.panTo(marker.getPosition());
 };
 
 //setup map info window and add event listner
