@@ -17,7 +17,7 @@
 		<div class="nav">
 			<div class="logo"></div>
 			<div class="search">
-				Search: <input value="search"></input><a href='#' data-bind="click: openWindow">open</a>
+				Search: <input data-bind="textInput: searchKey, click: clearSearch"></input>
 			</div>
 		</div>
 		<div class="list" data-bind="with: brewData">
@@ -27,9 +27,9 @@
 
 			<table data-bind="visible: breweryInfo().length > 0">
 				<thead><tr>
-					<th>Name</th><th>address</th></tr>
+					<th>Name</th></tr>
 				</thead>
-				<tbody data-bind="foreach: breweryInfo">
+				<tbody data-bind="foreach: $root.breweryDisplay">
 					<tr >
 						<td><a href='#' data-bind="click: $root.openWindow"><span data-bind="text: name"></span></a></td>
 						

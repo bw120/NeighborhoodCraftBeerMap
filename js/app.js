@@ -1,14 +1,14 @@
 //Initialize and set up map
 var map;
-var theLocation = "42.3600825, -71.05888010000001";
-
+var theLocation = "42.3863249267138, -71.14662318695514";
+var mapBounds;
 var bounds;
 
 var initMap = function() {
 
   bounds = new google.maps.LatLng(42.3600825, -71.05888010000001);
   var mapOptions = {
-    zoom: 13,
+    zoom: 12,
     center: bounds,
     mapTypeControl: false,
     zoomControl: true,
@@ -22,8 +22,14 @@ var initMap = function() {
     }
   }
   map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
+  mapBounds = new google.maps.LatLngBounds();
 };
+
+//  update bounds when resize browser
+window.addEventListener('resize', function(e) {
+  map.fitBounds(mapBounds);
+  map.setCenter(mapBounds.getCenter());
+});
 
 //setup markers on map
 var setUpMarkers = function(data, failed) {
@@ -73,7 +79,7 @@ var setUpInfoWindows = function(data, markers, failed) {
 };
 //set bounds of map based on data returned from ajax/search
 var setBounds = function(data) {
-  var mapBounds = new google.maps.LatLngBounds();
+
   var lat;
   var lng;
 
@@ -82,8 +88,11 @@ var setBounds = function(data) {
     lng = data[i].location.lng;
     mapBounds.extend(new google.maps.LatLng(lat, lng));
   }
-  map.fitBounds(mapBounds);
-  map.setCenter(mapBounds.getCenter());
+  if (mapBounds) {
+    map.fitBounds(mapBounds);
+    map.setCenter(mapBounds.getCenter());
+  }
+  //console.log(map.getBounds());
 }
 
 
@@ -97,7 +106,7 @@ var getBreweryInfo = function() {
 
   //set up URL for Ajax request
   var categoryID = "50327c8591d4c4b30a586d5d";
-  var radius = "100000";
+  var radius = "35000";
   var theURL = "https://api.foursquare.com/v2/venues/search?client_id=V5XZKQRSRXGVGCGN5U3YIFCXTIAZWCZA01V3U5ICI4KRNXOX&client_secret=0ATJHEHUGP41GLOHJJS4ACJC3ENKG311BRW2KR510Y2FPSPY&v=20130815&ll=" + theLocation + " &categoryId="+ categoryID + " &intent=browse&radius=" + radius;
 
   //send AJAX request
@@ -116,8 +125,9 @@ var getBreweryInfo = function() {
       //confirm the ajax search brough up results and set variable to show ajax request was successful 
       //and post results to obserable. Otherwise log fault.
       if (brewArr.length > 0) {
+        self.breweryInfo(brewArr);
         self.brewDataFailed(false);
-        self.breweryInfo(brewArr);   
+           
       } else {
         self.faultReason("Sorry, we were not able to find any breweries");
       }
@@ -125,7 +135,8 @@ var getBreweryInfo = function() {
 
   }).error(function(e) {
     self.faultReason("Sorry, we were not able to load the data");
-    console.log("There was an error getting brewery info")});
+    //console.log("There was an error getting brewery info")
+  });
 
 };
 
@@ -144,7 +155,8 @@ var beerMapViewModel = function() {
     var markers = setUpMarkers(self.brewData().breweryInfo(), self.brewData().brewDataFailed());
     //set up observable array of markers so we can control them later
     self.mapMarkers = ko.observableArray(markers);
-  }, this);
+    setBounds(self.brewData().breweryInfo());
+  }, self);
 
   //set up info windows
   self.infoWindows = ko.computed(function() {
@@ -156,8 +168,67 @@ var beerMapViewModel = function() {
    openInfoWindow(self.brewData().breweryInfo(), self.mapMarkers()[self.brewData().breweryInfo().indexOf(data)]);
   };
 
-setTimeout(function(){setBounds(self.brewData().breweryInfo());;}, 3000);
-//setTimeout(function(){openInfoWindow(self.brewData().breweryInfo(), self.mapMarkers()[3]);}, 4000);
+//Search 
+  this.searchKey = ko.observable("Search");
+  this.activeSearch = ko.observable(false);
+  this.clearSearch = function() {
+    if (this.activeSearch() === false) {
+      this.searchKey("");
+      this.activeSearch(true);
+    }
+
+  };
+
+  self.breweryDisplay = ko.computed(function() {
+    var searchMatches = [];
+    if (self.brewData().brewDataFailed() === false && this.activeSearch() === true) {
+      
+      //var strToMatch;
+      var searchArr = this.searchKey().toLocaleLowerCase().split(" ");
+      var brewName;
+      var match;
+      var wordsArr;
+      var strLength;
+      //go through the names of each brewery split names into arrays containg each separat word. Then compare that to an array from words in search box
+      for (i = 0; i < self.brewData().breweryInfo().length; i++) {
+          //strToMatch = self.brewData().breweryInfo()[i].name.substring(0, this.searchKey().length).toLocaleLowerCase();
+          brewName = self.brewData().breweryInfo()[i].name;
+          brewName.toLocaleLowerCase();
+          match = false;
+          wordsArr = brewName.split(" ");
+
+
+          // if (this.searchKey().toLocaleLowerCase() === strToMatch) {
+          //   match = true;
+          //   //searchMatches.push(self.brewData().breweryInfo()[i]);
+          // }
+          
+            for (var n = 0; n < wordsArr.length; n++ ) {
+                for (var e = 0; e < searchArr.length; e++ ) {
+                  strLength = searchArr[e].length;
+                    if ( wordsArr[n].substring(0, strLength).toLocaleLowerCase() === searchArr[e].toLocaleLowerCase()) {
+                      match = true;
+                    }
+                    
+                }
+            }
+
+          if (match === true) {
+            searchMatches.push(self.brewData().breweryInfo()[i]);
+          }
+      }
+
+    } else {
+      searchMatches = self.brewData().breweryInfo();
+    }
+    return searchMatches;
+  }, self);
+
+
+//--*****just some lines to help debug. 
+//setTimeout(function(){console.log(self.breweryDisplay());}, 3000);
+
+
 
 
 
