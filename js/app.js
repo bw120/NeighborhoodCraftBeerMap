@@ -1,13 +1,19 @@
-//Initialize and set up map
-var map;
-var mapBounds;
-var maxZoom = 14;
+//ViewModel
+var beerMapViewModel = function() {
+  var self = this;
 
-var initMap = function() {
+  //Get brewery Data from model
+  self.brewData = ko.observable( new breweryModel() );
+  var venues = self.brewData().venues;
 
-  bounds = new google.maps.LatLng(42.3600825, -71.05888010000001);
+  //Initialize and set up map
+  var mapBounds; //variable to hold current bounds
+  var maxZoom = 14; //need to set amount map zooms in when there are very few markers shown on the map otherwise it zooms in way too much
+
+  bounds = new google.maps.LatLng(42.3600825, -71.05888010000001); //default bounds
+
   var mapOptions = {
-    zoom: 15,
+    zoom: 18,
     center: bounds,
     mapTypeControl: false,
     zoomControl: true,
@@ -20,182 +26,109 @@ var initMap = function() {
       position: google.maps.ControlPosition.RIGHT_BOTTOM
     }
   }
-  map = new google.maps.Map(document.getElementById("map"), mapOptions);
-  //bounds = map.getBounds();
-  //console.log(bounds);
-  mapBounds = new google.maps.LatLngBounds();
-};
 
-//  update bounds when resize browser
-window.addEventListener('resize', function(e) {
-  map.fitBounds(mapBounds);
-  map.setCenter(mapBounds.getCenter());
-  if (map.getZoom() > maxZoom) { map.setZoom(maxZoom)};
-});
+  self.map = ko.observable(new google.maps.Map(document.getElementById("map"), mapOptions));
 
-//setup markers on map
-var setUpMarkers = function(data, failed) {
+  mapBounds = new google.maps.LatLngBounds(); //set up variable to hold bounds when markers are applied
+
+  //set bounds of map based on data or search
+  var setBounds = function(data) {
+    if (data.length > 0) {
+      var lat;
+      var lng;
+      var newBounds = new google.maps.LatLngBounds();
+      //if no data is provided set to default bounds
+      if (data.length < 1) {
+          newBounds.extend(bounds);
+      } else {
+        for (var i = 0; i < data.length; i++) {
+          lat = data[i].location.lat;
+          lng = data[i].location.lng;
+          newBounds.extend(new google.maps.LatLng(lat, lng));
+        }
+      }
+        self.map().fitBounds(newBounds);
+        if (self.map().getZoom() > maxZoom) { self.map().setZoom(maxZoom)}; //make sure it doesn't zoom in too far
+        self.map().panTo(newBounds.getCenter());
+        mapBounds = newBounds;
+    }
+  }
+
+  //update bounds when resize browser
+  window.addEventListener('resize', function(e) {
+    self.map().fitBounds(mapBounds);
+    self.map().setCenter(mapBounds.getCenter());
+    if (self.map().getZoom() > maxZoom) { self.map().setZoom(maxZoom)}; //adjust zoom if zoomed in too far
+  });
+
+  //put markers on the map
+  self.mapMarkers = ko.observableArray(); //store markers as an array
+
+  self.setMarkers = ko.computed(function() {
     var self = this;
     var markerArr = [];
 
-    //make sure data has loaded then setup markers
-    if (failed === false) {
-      bounds = map.getBounds();
-      for (i = 0; i < data.length; i++) {
+    //make sure map is loaded
+    if (self.map()) {
+
+      bounds = self.map().getBounds();
+
+      for (i = 0; i < venues.length; i++) {
         markerArr.push( new google.maps.Marker({
-          position: {lat: data[i].location.lat, lng: data[i].location.lng},
-          map: map,
+          position: {lat: venues[i].location.lat, lng: venues[i].location.lng},
+          map: self.map(),
           title: String(i) //set title as the key in breweryInfo array so it is easier to pass into map InfoWindow
           }));
       }
     }
-    return markerArr;
-};
 
-//set content for map info window
-var markerConent = function(data) {
-  var content = "<div class='infoWindow'><div class='venueName'>" + data.name + "</div><span class='address'>" +
-  data.location.address + "<br />" + data.location.city + ", " + data.location.state + " " + data.location.postalCode + " </span></div>";
-  return content;
-};
-
-//open info window
-var openInfoWindow = function(data, marker) {
-    infowindow.setContent(markerConent(data[marker.getTitle()]));
-    infowindow.open(map, marker);
-    map.panTo(marker.getPosition());
-};
-
-//setup map info window and add event listner
-var infowindow;
-var setUpInfoWindows = function(data, markers, failed) {
-    var self = this;
-
-    //make sure data has loaded then setup markers
-    if (failed === false && markers().length > 0) {
-      infowindow = new google.maps.InfoWindow();
-
-      for (var i = 0; i < markers().length; i++) {
-        google.maps.event.addListener(markers()[i], 'click', function(e) {openInfoWindow(data, this);});
-      }
-    }
-};
-
-//hide or show markers based on search input
-var showHideMarkers = function(markers, markersToShow) {
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(null);
-  }
-  for (var n = 0; n < markersToShow.length; n++) {
-    markers[markersToShow[n]].setMap(map);
-  }
-};
-
-
-//set bounds of map based on data returned from ajax/search
-var setBounds = function(data) {
-  if (mapBounds) {
-    var lat;
-    var lng;
-    var newBounds = new google.maps.LatLngBounds();
-    //if no data is provided default to center of Boston
-    if (data.length < 1) {
-        lat = 42.3600825;
-        lng = -71.05888010000001;
-        newBounds.extend(new google.maps.LatLng(lat, lng));
-    } else {
-      for (var i = 0; i < data.length; i++) {
-        lat = data[i].location.lat;
-        lng = data[i].location.lng;
-        newBounds.extend(new google.maps.LatLng(lat, lng));
-    }
-    }
-
-      map.fitBounds(newBounds);
-      map.panTo(newBounds.getCenter());
-      if (map.getZoom() > maxZoom) { map.setZoom(maxZoom)};
-      mapBounds = newBounds;
-  }
-  //console.log(map.getBounds());
-}
-
-
-///get brewery data from Foursquare
-var getBreweryInfo = function() {
-  var self = this;
-  self.breweryInfo = ko.observableArray();
-  self.brewDataFailed = ko.observable(true);
-  self.faultReason = ko.observable("Loading data...");
-
-
-  //set up URL for Ajax request
-  var categoryID = "50327c8591d4c4b30a586d5d";
-  var theLocation = "42.3600825, -71.05888010000001"
-  var radius = "35000";
-  var theURL = "https://api.foursquare.com/v2/venues/search?client_id=V5XZKQRSRXGVGCGN5U3YIFCXTIAZWCZA01V3U5ICI4KRNXOX&client_secret=0ATJHEHUGP41GLOHJJS4ACJC3ENKG311BRW2KR510Y2FPSPY&v=20130815&ll=" + theLocation + " &categoryId="+ categoryID + " &intent=browse&radius=" + radius;
-
-  //send AJAX request
-  $.getJSON(theURL, function(data){
-      var breweryData = data.response.venues;
-      var brewArr = [];
-
-      //Foursquare API search by categoryID still gives a few venues not in that category.
-      //So here we have to remove what we don't want.
-      for (i = 0; i < breweryData.length; i++) {
-        if (breweryData[i].categories[0].id === categoryID) {
-          brewArr.push(breweryData[i]);
-        }
-      }
-
-      //confirm the ajax search brough up results and set variable to show ajax request was successful
-      //and post results to obserable. Otherwise log fault.
-      if (brewArr.length > 0) {
-        self.breweryInfo(brewArr);
-        self.brewDataFailed(false);
-
-      } else {
-        self.faultReason("Sorry, we were not able to find any breweries");
-      }
-
-
-  }).error(function(e) {
-    self.faultReason("Sorry, we were not able to load the data");
-    //console.log("There was an error getting brewery info")
-  });
-
-};
-
-
-// Knockout ViewModel
-var beerMapViewModel = function() {
-  var self = this;
-
-
-  //Get brewery Data
-  self.brewData = ko.observable( new getBreweryInfo() );
-
-  //put markers on the map
-  //used a computed observable so that it gets caluclated when ajax data becomes available
-  self.setMarkers = ko.computed(function() {
-    var markers = setUpMarkers(self.brewData().breweryInfo(), self.brewData().brewDataFailed());
-    //set up observable array of markers so we can control them later
-    self.mapMarkers = ko.observableArray(markers);
-    setBounds(self.brewData().breweryInfo());
+    //assign markers to observable array so we can control them later
+    self.mapMarkers(markerArr);
+    setBounds(venues);
   }, self);
 
-  //set up info windows
-  self.infoWindows = ko.computed(function() {
-    var iWindows = setUpInfoWindows(self.brewData().breweryInfo(), self.mapMarkers, self.brewData().brewDataFailed());
-  });
+  //setup map infowindow and add google event listner
+  var infowindow = new google.maps.InfoWindow();
+  for (var i = 0; i < self.mapMarkers().length; i++) {
+    google.maps.event.addListener(self.mapMarkers()[i], 'click', function(e) {openInfoWindow(this);});
+  }
 
-//pass info from interface to openInfoWindow()
-  this.openWindow = function(data) {
-   openInfoWindow(self.brewData().breweryInfo(), self.mapMarkers()[self.brewData().breweryInfo().indexOf(data)]);
+
+  //set content for map info window
+  var markerConent = function(data) {
+    var content = "<div class='infoWindow'><div class='venueName'>" + data.name + "</div><span class='address'>" +
+    data.location.address + "<br />" + data.location.city + ", " + data.location.state + " " + data.location.postalCode + " </span></div>";
+    return content;
   };
 
-//Search
-  this.searchKey = ko.observable("Search");
-  this.activeSearch = ko.observable(false);
+  //open info window
+  var openInfoWindow = function(marker) {
+
+      infowindow.setContent(markerConent(venues[marker.getTitle()]));
+      infowindow.open(self.map(), marker);
+      self.map().panTo(marker.getPosition());
+  };
+
+  //pass info from view to openInfoWindow()
+  this.openWindow = function(data) {
+     openInfoWindow(self.mapMarkers()[self.brewData().venues.indexOf(data)]);
+    };
+
+
+  //hide or show markers based on search input
+  var showHideMarkers = function(markers, markersToShow) {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(null);
+    }
+    for (var n = 0; n < markersToShow.length; n++) {
+      markers[markersToShow[n]].setMap(self.map());
+    }
+  };
+
+  //Search
+  this.searchKey = ko.observable("Search"); //default value displays in search box until you click on it
+  this.activeSearch = ko.observable(false); //is the user activly trying to search
+  //clear search box when user clicks and set activeSearch to true
   this.clearSearch = function() {
     if (this.activeSearch() === false) {
       this.searchKey("");
@@ -204,31 +137,24 @@ var beerMapViewModel = function() {
 
   };
 
+  //as the user types a query this function checks user input against venue name
   self.breweryDisplay = ko.computed(function() {
     var searchMatches = [];
-    if (self.brewData().brewDataFailed() === false && this.activeSearch() === true) {
+    if (this.activeSearch() === true) {
 
-      //var strToMatch;
+    
       var searchArr = this.searchKey().toLocaleLowerCase().split(" ");
       var brewName;
       var match;
       var wordsArr;
       var strLength;
       var markersToDisplay = [];
-      //go through the names of each brewery split names into arrays containg each separat word. Then compare that to an array from words in search box
-      for (i = 0; i < self.brewData().breweryInfo().length; i++) {
-          //strToMatch = self.brewData().breweryInfo()[i].name.substring(0, this.searchKey().length).toLocaleLowerCase();
-          brewName = self.brewData().breweryInfo()[i].name;
+      //go through the names of each brewery names split into arrays containg each separate word. Then compare that to an array from words in search box
+      for (i = 0; i < self.brewData().venues.length; i++) {
+          brewName = self.brewData().venues[i].name;
           brewName.toLocaleLowerCase();
           match = false;
           wordsArr = brewName.split(" ");
-
-
-
-          // if (this.searchKey().toLocaleLowerCase() === strToMatch) {
-          //   match = true;
-          //   //searchMatches.push(self.brewData().breweryInfo()[i]);
-          // }
 
             for (var n = 0; n < wordsArr.length; n++ ) {
                 for (var e = 0; e < searchArr.length; e++ ) {
@@ -241,28 +167,42 @@ var beerMapViewModel = function() {
             }
 
           if (match === true) {
-            searchMatches.push(self.brewData().breweryInfo()[i]);
+            searchMatches.push(self.brewData().venues[i]);
+            //make an array of index of items that get returned in search. This gets used to show/hide markers on map
             markersToDisplay.push(i);
           }
       }
-        for (var p = 0; p < self.brewData().breweryInfo(); p++ ) {
-          markersToDisplay.push(i);
-        }
+    
 
-        showHideMarkers(self.mapMarkers(), markersToDisplay)
-        setBounds(searchMatches);
+      //pass the array to function to hide/show markers
+      showHideMarkers(self.mapMarkers(), markersToDisplay);
+      //reset bounds based on search results
+      setBounds(searchMatches);
 
     } else {
-      searchMatches = self.brewData().breweryInfo();
+      //if user is not searching it displays all venues
+      searchMatches = self.brewData().venues;
     }
     return searchMatches;
   }, self);
 
+  //get info from FourSquare for each venue
+  self.fSqr = ko.observableArray();
+  for (var i = 0; i < venues.length; i++) {
+    self.fSqr.push(new getFsqrInfo(venues[i].fSqrID));
+  };
+
+//#####need to change 1 to venues.length before finalizing. Put as one for testing to prevent going over rate limit
+  //get info from Untappd for each brewery
+  self.untppd = ko.observableArray();
+  for (var i = 0; i < 1; i++) {
+    console.log(venues[i].untppdID);
+    self.untppd.push(new getUntppdInfo(venues[i].untppdID));
+  };
+
 
 //--*****just some lines to help debug.
-setTimeout(function(){console.log(map.getBounds());}, 3000);
-
-
+setTimeout(function(){console.log(self.untppd()[0].untpdData);}, 3000);
 
 
 

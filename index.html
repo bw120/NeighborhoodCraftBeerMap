@@ -13,38 +13,36 @@
 		<link href='https://fonts.googleapis.com/css?family=Contrail+One' rel='stylesheet' type='text/css'>
 	</head>
 	<body>
-		<div id="map" class="map"></div>
-		<div class="nav">
-			<div class="logo"></div>
-			<div class="search">
-				Search: <input data-bind="textInput: searchKey, click: clearSearch"></input>
+		
+			<div class="nav">
+				<div class="logo"></div>
+				<div class="search">
+					Search: <input data-bind="textInput: searchKey, click: clearSearch"></input>
+				</div>
 			</div>
-		</div>
-		<div class="list" data-bind="with: brewData">
-			<span data-bind="visible: brewDataFailed">
-				<span data-bind="text: faultReason"></span>
-			</span>
+			
+		<div class="container">
+			
+			<div class="list" data-bind="with: brewData">
 
-			<table data-bind="visible: breweryInfo().length > 0">
-				<thead><tr>
-					<th>Name</th></tr>
-				</thead>
-				<tbody data-bind="foreach: $root.breweryDisplay">
-					<tr >
-						<td><a href='#' data-bind="click: $root.openWindow"><span data-bind="text: name"></span></a></td>
-						
-					</tr>
+				<table data-bind="visible: venues.length > 0">
+					<thead><tr>
+						<th>Name</th></tr>
+					</thead>
+					<tbody data-bind="foreach: $root.breweryDisplay">
+						<tr >
+							<td><a href='#' data-bind="click: $root.openWindow"><span data-bind="text: name"></span></a></td>
+						</tr>
+					</tbody>
+				</table>
 
-
-				</tbody>
-			</table>
-
-			</table>
-
-	</div>
-		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs5QWTUg_Ro-QNzmvdHVsfMILqmsntPZA&callback=initMap"></script>
+			</div>
+			<div id="map" class="map">map</div>
+		</civ>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs5QWTUg_Ro-QNzmvdHVsfMILqmsntPZA"></script>
 		<script type='text/javascript' src='js/libs/knockout-3.3.0.js'></script>
 		<script type='text/javascript' src="js/libs/jquery-1.11.3.min.js"></script>
+		<script src="js/model.js"></script>
 		<script src="js/app.js"></script>
 	</body>
 
