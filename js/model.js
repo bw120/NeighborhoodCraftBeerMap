@@ -187,7 +187,7 @@ var breweryModel = function() {
     },  {
         "fSqrID": "55318dd1498ecba13d173b31",
         "untppdID": 16923,
-        "name": "Somerville Brewing Company (Slumbrew), American Fresh Brewhouse, Boynton Yard",
+        "name": "Somerville Brewing Company (Slumbrew)",
         "contact": {},
         "location": {
             "address": "15 Ward St",

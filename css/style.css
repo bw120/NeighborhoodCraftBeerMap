@@ -14,19 +14,19 @@ a {
     text-decoration: none;
 }
 a:link {
-    color: #747704;
+    color: #494000;
 }
 
 a:visited {
-    color: #747704;
+    color: #494000;
 }
 
 a:hover {
-	color: #FF3300;
+	color: #ff6000;
 }
 
 a:active {
-	color: #FF3300;
+	color: #ff6000;
 }
 
 
@@ -34,18 +34,22 @@ a:active {
 	margin: 0; 
 	padding: 0;
 	height: 100%;
-	width: 75%;
+	width: 70%;
 }
 
-.nav {
-
+.navContainer {
+	margin: 0; 
+	padding: 0;
 	width: 100%;
 	height: 10%;
+
+}
+.nav {
 	color: white;
 	background-color: #336699;
-	border-bottom: 2px solid #FF9933;
-	top: 0;
-	left: 0;
+	border-bottom: 3px solid #ff6000;
+	width: 100%;
+	height: 98%;
 	display: flex;
 	display: -webkit-flex;
 	flex-wrap: nowrap;
@@ -55,9 +59,9 @@ a:active {
 
 .container {
 	width: 100%;
-	height: 100%;
+	height: 90%;
+	margin: 0; 
 	padding: 0;
-	margin: 0;
 	display: flex;
 	display: -webkit-flex;
 	flex-wrap: nowrap;
@@ -79,22 +83,65 @@ a:active {
 	top: 2%;
 	left: 2%;
 	padding: 2%;
-
+	display: inline-block
 
 }
+.details {
+	font-family: 'Cuprum', sans-serif;
+	font-size: 12px;
+	position: absolute;
+	top: 10%;
+	left: 30%;
+	height: 90%;
+	z-index: 1;
+	padding: 2%;
+	background-color: white;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+
 .list {
 	font-family: 'Cuprum', sans-serif;
-
-	width: 25%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: 30%;
 	height: 100%;
-	padding: 2%;
-
-	border-right: 1px solid gray;
+	border-right: 1px solid black;
 	background-color: white;
-	opacity: .8;
 }
+.bLogoContainer {
+	width: 20%;
+	text-align-left: auto;
+	text-align-right: auto;
+}
+.bLogo {
+	width: 30px;
+	height: 30px;
+	border: 1px solid black;
+	background-color: gray;
+}
+
 .breweryItem {
-	border-bottom: 1px solid gray;
+	
+	display: flex;
+	display: -webkit-flex;
+	flex-wrap: nowrap;
+	-webkit-flex-wrap: nowrap;
+}
+.breweryName {
+	width: 80%;
+	font-size: 14px;
+	font-weight: 600;
+	display: inline-block
+}
+.breweryBox {
+	border-bottom: 1px solid #d1d1d1;
+	padding: 3%;
+}
+.breweryBox:hover {
+	background-color: #bbbbbb;
+	color: #ff6000;
 }
 input {
 	border-radius: 5px;
@@ -111,4 +158,21 @@ input {
 }
 .address {
 	color: black;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+::-webkit-scrollbar-track {
+	background-color: white;
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); */
+
+}
+ 
+::-webkit-scrollbar-thumb {
+	background-color: #a4a4a4;
+
+    border-radius: 20px;
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); */
 }

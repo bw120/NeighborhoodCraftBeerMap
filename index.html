@@ -13,31 +13,44 @@
 		<link href='https://fonts.googleapis.com/css?family=Contrail+One' rel='stylesheet' type='text/css'>
 	</head>
 	<body>
-		
+		<div class="navContainer">
 			<div class="nav">
 				<div class="logo"></div>
 				<div class="search">
-					Search: <input data-bind="textInput: searchKey, click: clearSearch"></input>
+					Search: <input data-bind="textInput: searchKey, click: clearSearch"></input><span data-bind="click: $root.cancelSearch">X</span>
 				</div>
 			</div>
+		</div>
 			
 		<div class="container">
-			
-			<div class="list" data-bind="with: brewData">
+			<div class="details" data-bind="visible: detailsOpen, with: brewDetails()">
+				<h2 data-bind="click: $root.closeDetails">X close</h2>
+				<h3 data-bind="text: name"></h3>
+				<span class='address' data-bind="text: location.address"></span><br /><span class='address' data-bind="text: location.city"></span>, <span class='address' data-bind="text: location.city"></span> <span class='address' data-bind="text: location.postalCode"></span> <br /><span class='address' data-bind="text: contact.formattedPhone"></span> <br/><span class='address' data-bind="text: url"></span><br/>Twitter, FB logos</span>
+			<div data-bind="with: $root.fSqrDetails()">
 
-				<table data-bind="visible: venues.length > 0">
-					<thead><tr>
-						<th>Name</th></tr>
-					</thead>
-					<tbody data-bind="foreach: $root.breweryDisplay">
-						<tr >
-							<td><a href='#' data-bind="click: $root.openWindow"><span data-bind="text: name"></span></a></td>
-						</tr>
-					</tbody>
-				</table>
+				<h4 >Foursqure</h4>
+				<p class="detailName">Veune Rating</p><span class="info" data-bind="text: rating"></span>
+				<p class="detailName">Online Menu</p>
+				<p class="detailName">Click to see on Foursqure.com</p>
+				<p class="detailName" data-bind="text: tips.groups[0].items[0].text"></p>
+				<p class="detailName" data-bind="text: tips.groups[0].items[1].text"></p>
+				<p class="detailName" data-bind="text: tips.groups[0].items[3].text"></p>
+			</div>
+				<h4>Untappd</h4>
+				<p class="detailName">Brewery Rating</p><span class="info">3.5</span>
+				<p class="detailName">Beer 1</p><span class="info">style: saison, IBU: 50, ABV: 4.5</span>
+				<p class="detailName">Beer 2</p><span class="info">style: saison, IBU: 50, ABV: 4.5</span>
+			</div>
+			<div class="list" data-bind="foreach: $root.breweryDisplay">
+				<div class="breweryBox">
+					<div class="breweryItem" data-bind="click: $root.openWindow"><div class="bLogoContainer"><div class="bLogo">logo</div></div><span class="breweryName" data-bind="text: name"></span></div><div data-bind="click: $root.openDetails">Click for details</div>
+				</div>
+
 
 			</div>
-			<div id="map" class="map">map</div>
+
+			<div id="map" class="map"></div>
 		</civ>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs5QWTUg_Ro-QNzmvdHVsfMILqmsntPZA"></script>
 		<script type='text/javascript' src='js/libs/knockout-3.3.0.js'></script>

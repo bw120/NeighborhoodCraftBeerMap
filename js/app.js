@@ -137,9 +137,16 @@ var beerMapViewModel = function() {
 
   };
 
+  this.cancelSearch = function() {
+    this.activeSearch(false);
+    this.searchKey("Search");
+
+  }
+
   //as the user types a query this function checks user input against venue name
   self.breweryDisplay = ko.computed(function() {
     var searchMatches = [];
+    var markersToDisplay = [];
     if (this.activeSearch() === true) {
 
     
@@ -148,7 +155,7 @@ var beerMapViewModel = function() {
       var match;
       var wordsArr;
       var strLength;
-      var markersToDisplay = [];
+      
       //go through the names of each brewery names split into arrays containg each separate word. Then compare that to an array from words in search box
       for (i = 0; i < self.brewData().venues.length; i++) {
           brewName = self.brewData().venues[i].name;
@@ -182,6 +189,14 @@ var beerMapViewModel = function() {
     } else {
       //if user is not searching it displays all venues
       searchMatches = self.brewData().venues;
+      for (var n = 0; n < searchMatches.length; n++ ) {
+        markersToDisplay.push(n);
+      }
+      //pass the array to function to hide/show markers
+      showHideMarkers(self.mapMarkers(), markersToDisplay);
+      //reset bounds based on search results
+      setBounds(searchMatches);
+
     }
     return searchMatches;
   }, self);
@@ -196,13 +211,31 @@ var beerMapViewModel = function() {
   //get info from Untappd for each brewery
   self.untppd = ko.observableArray();
   for (var i = 0; i < 1; i++) {
-    console.log(venues[i].untppdID);
-    self.untppd.push(new getUntppdInfo(venues[i].untppdID));
+    //self.untppd.push(new getUntppdInfo(venues[i].untppdID)); //-->commented out to reduce # of request so you don't go over
+  };
+
+  //pass info from view to open display window
+  self.detailsOpen = ko.observable(false);
+  self.detailsIndex = ko.observable();
+  self.brewDetails = ko.observable();
+  self.fSqrDetails = ko.observable();
+  this.openDetails = function(data) {
+    self.detailsOpen(true);
+    self.detailsIndex(self.brewData().venues.indexOf(data));
+    self.brewDetails(data);
+    self.fSqrDetails(self.fSqr()[self.detailsIndex()].fSqrdata.response.venue);
+     console.log(self.fSqr()[self.detailsIndex()]);
+    };
+  this.closeDetails = function(data) {
+    self.detailsOpen(false);
   };
 
 
-//--*****just some lines to help debug.
-setTimeout(function(){console.log(self.untppd()[0].untpdData);}, 3000);
+
+
+
+//--*****just some lines to help debug. Since a lot of data is async need to put as setTimeout to give it time to load
+//setTimeout(function(){console.log(self.untppd()[0].untpdData);}, 3000);
 
 
 
