@@ -1,62 +1,170 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-		<title>Neighborhood Craft Breweries</title>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=no">
+	    <title>Neighborhood Craft Breweries</title>
 
-
-
-
-		<link rel="stylesheet" href="css/style.css">
-		<link href='https://fonts.googleapis.com/css?family=Contrail+One' rel='stylesheet' type='text/css'>
+	    <link rel="stylesheet" href="css/style.css">
+	    <link href='https://fonts.googleapis.com/css?family=Contrail+One' rel='stylesheet' type='text/css'>
+	    <link href="http://weloveiconfonts.com/api/?family=fontawesome|zocial" rel="stylesheet" type="text/css">
 	</head>
+
 	<body>
-		<div class="navContainer">
-			<div class="nav">
-				<div class="logo"></div>
-				<div class="search">
-					Search: <input data-bind="textInput: searchKey, click: clearSearch"></input><span data-bind="click: $root.cancelSearch">X</span>
-				</div>
-			</div>
-		</div>
-			
+
 		<div class="container">
-			<div class="details" data-bind="visible: detailsOpen, with: brewDetails()">
-				<h2 data-bind="click: $root.closeDetails">X close</h2>
-				<h3 data-bind="text: name"></h3>
-				<span class='address' data-bind="text: location.address"></span><br /><span class='address' data-bind="text: location.city"></span>, <span class='address' data-bind="text: location.city"></span> <span class='address' data-bind="text: location.postalCode"></span> <br /><span class='address' data-bind="text: contact.formattedPhone"></span> <br/><span class='address' data-bind="text: url"></span><br/>Twitter, FB logos</span>
-			<div data-bind="with: $root.fSqrDetails()">
 
-				<h4 >Foursqure</h4>
-				<p class="detailName">Veune Rating</p><span class="info" data-bind="text: rating"></span>
-				<p class="detailName">Online Menu</p>
-				<p class="detailName">Click to see on Foursqure.com</p>
-				<p class="detailName" data-bind="text: tips.groups[0].items[0].text"></p>
-				<p class="detailName" data-bind="text: tips.groups[0].items[1].text"></p>
-				<p class="detailName" data-bind="text: tips.groups[0].items[3].text"></p>
+			<!-- top bar -->
+			<div class="topBar noWrap">
+				<div class="topBarLeft">BrewFiend</div>
+	            <div class="topBarRight"><a class="toggle" href="#" data-bind="click: $root.toggleView">toggle view</a>
+	            </div>
 			</div>
-				<h4>Untappd</h4>
-				<p class="detailName">Brewery Rating</p><span class="info">3.5</span>
-				<p class="detailName">Beer 1</p><span class="info">style: saison, IBU: 50, ABV: 4.5</span>
-				<p class="detailName">Beer 2</p><span class="info">style: saison, IBU: 50, ABV: 4.5</span>
-			</div>
-			<div class="list" data-bind="foreach: $root.breweryDisplay">
-				<div class="breweryBox">
-					<div class="breweryItem" data-bind="click: $root.openWindow"><div class="bLogoContainer"><div class="bLogo">logo</div></div><span class="breweryName" data-bind="text: name"></span></div><div data-bind="click: $root.openDetails">Click for details</div>
+
+			<div class="innerContainer">
+				<!-- brewery summary window -->
+				<div class="summaryContainer box hide" data-bind="style: { display: summaryOpen() === false ? 'none' : 'inline' }, with: brewDetails()">
+					<div class="closeButton" data-bind="click: $parent.closeSummary">X close</div>
+					<div class="summary">
+						<div class="noWrap">
+							<div class="bLogoContainer"><img class="bLogo" data-bind="attr: { src: logoURL, alt: name }">
+			                </div>
+							<div class="venueInfo column">
+								<div class="breweryDetailName" data-bind="text: name"></div>
+								<div class="info" data-bind="with: $root.fSqrDetails()">Foursquare rating: <span class="rating" data-bind="text: rating"></span>/10</div>
+								<div class="info" data-bind="with: $root.untppdDetails()">Untappd rating: <span class="rating" data-bind="text: rating.rating_score"></span>/5</div>
+								<div class="open" data-bind="click: $root.openDetails">Full Details...</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- brewery details window -->
+				<div class="detailsConainer box hide" data-bind="style: { display: detailsOpen() === false ? 'none' : 'inline' }, with: brewDetails()">
+					<div class="closeButton" data-bind="click: $parent.closeDetails">X close</div>
+					<div class="details column">
+						<div class="summary noWrap">
+							<div class="bLogoContainer"><img class="bLogo" data-bind="attr: { src: logoURL, alt: name }"></div>
+							<div class="venueInfo column">
+								<div class="breweryDetailName" data-bind="text: name"></div>
+								<div class="info" data-bind="text: location.address"></div>
+								<div class="info">
+									<span class="info" data-bind="text: location.city"></span>,
+									<span class="info" data-bind="text: location.state"></span>
+									<span class="info" data-bind="text: location.postalCode"></span>
+								</div>
+								<div class='info' data-bind="text: contact.formattedPhone"></div>
+								<a class="info" data-bind="attr: { href: url }"><span data-bind="text: url"></span></a>
+								<div class="info noWrap">
+				                    <span data-bind="if: contact.twitter"><a data-bind="attr: { href: 'http://www.twitter.com/' + contact.twitter }"><span class="icon zocial-twitter"></span>
+				                    </a>
+				                    </span>
+				                    <span data-bind="if: contact.facebook"><a data-bind="attr: { href: 'http://www.facebook.com/' + contact.facebook }"><span class="icon zocial-facebook"></span>
+				                    </a>
+				                    </span>
+				                </div>
+							</div>
+						</div>
+
+						<!-- Foursquare details -->
+						<div class="apiInfo" data-bind="with: $root.fSqrDetails()">
+							<a class="info" data-bind="attr: { href: shortUrl }"><img class="apiLogo" src="images/foursquare_logo.png"></a>
+							<div class="summary column">
+
+								<!-- ko if: typeof menu != "undefined" -->
+								<div class="menu">
+									<a href="#" class="info" data-bind="url: { href: menu.mobileUrl }">Online Menu</a>
+								</div>
+								<!-- /ko -->
+							</div>
+							<div class="tipsBox">
+								<div class="apiHeader">Tips from Foursquare</div>
+								<div data-bind="foreach: tips.groups[0].items">
+									<div class="tipsItem" data-bind="visible: $index() < 3">
+										<span class="tips" data-bind="text: text"></span><br />
+										<span class="credit">-<span data-bind="text: user.firstName"></span> <span data-bind="text: user.lastName"></span></span>
+									</div>
+
+								</div>
+							</div>
+							<a class="info" data-bind="attr: { href: shortUrl }">View on Foursquare.com</a>
+						</div>
+						<!-- Untappd details -->
+						<div class="apiInfo" data-bind="with: $root.untppdDetails()">
+							<a class="info" data-bind="attr: { href: 'https://untappd.com/brewery/' + brewery_id }"><img class="apiLogo" src="images/untappd_logo.png"></a>
+							<div class="beerListBox">
+								<div class="apiHeader">Beer list from Untappd</div>
+								<div class="beerList" data-bind="foreach: beer_list.items">
+									<div class="beerListItem">
+										<div class="beerName" data-bind="text: beer.beer_name"></div>
+										<span data-bind="text: beer.beer_style"></span>,
+										<span class="beerAtt">ABV: </span><span data-bind="text: beer.beer_abv"></span>,
+										<span class="beerAtt">IBU: </span><span data-bind="text: beer.beer_ibu"></span>,
+										<span class="beerAtt">Score: </span><span class="rating" data-bind="text: beer.rating_score"></span>/5
+									</div>
+
+								</div>
+
+							</div>
+							<a class="info" data-bind="attr: { href: 'https://untappd.com/brewery/' + brewery_id }">View on Untappd.com</a>
+						</div>
+					</div>
 				</div>
 
 
+
+				<div class="listContainer" data-bind="css : {'desktop' : listView() === false}">
+					<!-- search -->
+					<div class="search noWrap">
+		                <span>Search: </span>
+		                <input class="searchInput" data-bind="textInput: searchKey, click: clearSearch">
+		                <a class="closeIcon hide" href="#" data-bind="style: { display: activeSearch() === 'true' ? 'inline' : 'none' }, style: { display: activeSearch() === false ? 'none' : 'inline' }, click: $root.cancelSearch">
+							<svg class="closeIcon" xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 30 30"><style>.st0 { fill: #B3B3B3; } .st1 { fill: #FFFFFF; }</style><circle class="st0" cx="15" cy="15.4" r="13.5"/><path class="st1" d="M6 24l7.6-9.4L6.9 6H10l3.6 4.6c.7 1 1.3 1.7 1.6 2.2.4-.7 1-1.3 1.6-2.1l4-4.8h2.8l-6.9 8.5L24 24h-3.2l-4.9-6.4-.9-1.2c-.4.7-.8 1.1-.9 1.4l-5 6.2H6z"/></svg>
+		                </a>
+					</div>
+
+					<!-- List -->
+			        <div class="list" data-bind="foreach: $root.breweryDisplay">
+					    <div class="breweryBox breweryButton">
+					    	<div class="breweryItem desktop" data-bind="click: $root.openWindow">
+				                <a href="#" class="noWrap breweryButton">
+				                    <div class="bLogoContainer">
+				                    	<img class="bLogo" data-bind="attr: { src: logoURL, alt: name }">
+				                    </div>
+				                    <div class="breweryName breweryButton" data-bind="text: name"></div>
+				                </a>
+					    	</div>
+					    	<div class="breweryItem mobile" data-bind="click: $root.openDetails_mobile">
+				                <a href="#" class="noWrap breweryButton">
+				                    <div class="bLogoContainer">
+				                    	<img class="bLogo" data-bind="attr: { src: logoURL, alt: name }">
+				                    </div>
+				                    <div class="breweryName breweryButton" data-bind="text: name"></div>
+				                </a>
+					    	</div>
+					    </div>
+					</div>
+				</div>
+
+				<!-- map -->
+				<div id="map" class="map" data-bind="style: { zIndex: listView() === true ? '0' : '1' }"></div>
+
 			</div>
 
-			<div id="map" class="map"></div>
-		</civ>
-		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs5QWTUg_Ro-QNzmvdHVsfMILqmsntPZA"></script>
-		<script type='text/javascript' src='js/libs/knockout-3.3.0.js'></script>
-		<script type='text/javascript' src="js/libs/jquery-1.11.3.min.js"></script>
-		<script src="js/model.js"></script>
-		<script src="js/app.js"></script>
+			<!-- bottom bar -->
+			<div class="bottomBar"></div>
+
+		</div>
+
+
+
+	    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs5QWTUg_Ro-QNzmvdHVsfMILqmsntPZA"></script>
+	    <script type='text/javascript' src='js/libs/knockout-3.3.0.js'></script>
+	    <script type='text/javascript' src="js/libs/jquery-1.11.3.min.js"></script>
+	    <script async src="js/venues.js"></script>
+	    <script async src="js/app.js"></script>
 	</body>
 
 </html>
