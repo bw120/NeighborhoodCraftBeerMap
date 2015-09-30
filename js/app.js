@@ -90,7 +90,7 @@ var beerMapViewModel = function() {
   var maxZoom = 13; //need to set amount map zooms in when there are very few markers shown on the map otherwise it zooms in way too much
   var currMapCenter; //stores current map center to be used for browser resize
   var mapBounds;
-  var mapCenterXoffset = "-550"; //offset position of map to account for the search and brewery list covering up some of the map
+  var mapCenterXoffset = "-750"; //offset position of map to account for the search and brewery list covering up some of the map
   var mapCenterYoffset = "-370"; //offset position of map to account for details window covering up map
 
   //default bounds
@@ -173,7 +173,7 @@ var beerMapViewModel = function() {
       var mostEast = data[0].location.lng;
       var mostSouth = data[0].location.lat;
       var newBounds = new google.maps.LatLngBounds();
-      map.setZoom(14);
+      map.setZoom(11);
 
       //add each location to the map bounds
       for (var i = 0; i < data.length; i++) {
