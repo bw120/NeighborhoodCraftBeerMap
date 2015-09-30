@@ -18,23 +18,38 @@
 
 			<!-- top bar -->
 			<div class="topBar noWrap">
-				<div class="topBarLeft">BrewFiend</div>
-	            <div class="topBarRight"><a class="toggle" href="#" data-bind="click: $root.toggleView">toggle view</a>
+				<div class="topBarLeft noWrap"><img class="logo" src="images/hopsLogo.png"><span class="header"> BrewFiend</span><span class="subHead">Boston Area Breweries</span></div>
+	            <div class="topBarRight">
+	            	<div class="mobile listIcon" data-bind="click: $root.toggleView">
+	            		<div class="toggle" data-bind="if: listView()">
+	            			<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="206 -206 512 512" enable-background="new 206 -206 512 512" xml:space="preserve"><g><path fill="#FFFFFF" d="M622-158c-44.2,0-80,35.8-80,80c0,11.9,2.6,23.3,7.3,33.4L622,98l72.7-142.6c4.7-10.2,7.3-21.5,7.3-33.4C702-122.2,666.2-158,622-158z M622-30c-26.5,0-48-21.5-48-48s21.5-48,48-48s48,21.5,48,48S648.5-30,622-30z M645.9,121.5l29.1,58.2l-73.8,36.9L576.5,92.8l4.2-4.2l0.4-0.4l-15.2-30L558,66L462,2l-96,64L302,2l-96,192l128,64l128-64l128,64l128-64L664,86L645.9,121.5z M322.8,216.6l-73.8-36.9L310.8,56l32.6,32.6l4.2,4.2L322.8,216.6z M446,166.2L356.5,211l23.1-115.6l4.1-2.8L446,51.1V166.2z M478,166.2V51.1l62.2,41.5l4.1,2.8L567.5,211L478,166.2z"/></g></svg>
+
+	            		</div>
+	            		<div class="toggle" data-bind="ifnot: listView()">
+	            			<?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve"><g><path fill="#FFFFFF" d="M11.5,27.2C5.2,27.2,0,22.1,0,15.7S5.2,4.2,11.5,4.2S23,9.4,23,15.7S17.9,27.2,11.5,27.2z M11.5,10.1c-3.1,0-5.6,2.5-5.6,5.6s2.5,5.6,5.6,5.6c3.1,0,5.6-2.5,5.6-5.6S14.6,10.1,11.5,10.1z"/><path fill="#FFFFFF" d="M97.1,18.7H36.8c-1.6,0-2.9-1.3-2.9-2.9s1.3-2.9,2.9-2.9h60.3c1.6,0,2.9,1.3,2.9,2.9S98.7,18.7,97.1,18.7z"/><path fill="#FFFFFF" d="M11.5,61.5C5.2,61.5,0,56.3,0,50s5.2-11.5,11.5-11.5S23,43.7,23,50S17.9,61.5,11.5,61.5z M11.5,44.4c-3.1,0-5.6,2.5-5.6,5.6s2.5,5.6,5.6,5.6c3.1,0,5.6-2.5,5.6-5.6S14.6,44.4,11.5,44.4z"/><path fill="#FFFFFF" d="M97.1,52.9H36.8c-1.6,0-2.9-1.3-2.9-2.9s1.3-2.9,2.9-2.9h60.3c1.6,0,2.9,1.3,2.9,2.9S98.7,52.9,97.1,52.9z"/><path fill="#FFFFFF" d="M11.5,95.8C5.2,95.8,0,90.6,0,84.3s5.2-11.5,11.5-11.5S23,77.9,23,84.3C23,90.6,17.9,95.8,11.5,95.8z M11.5,78.6c-3.1,0-5.6,2.5-5.6,5.6s2.5,5.6,5.6,5.6c3.1,0,5.6-2.5,5.6-5.6S14.6,78.6,11.5,78.6z"/><path fill="#FFFFFF" d="M97.1,87.2H36.8c-1.6,0-2.9-1.3-2.9-2.9c0-1.6,1.3-2.9,2.9-2.9h60.3c1.6,0,2.9,1.3,2.9,2.9C100,85.9,98.7,87.2,97.1,87.2z"/></g></svg>
+
+	            		</div>
+	            	</div>
 	            </div>
 			</div>
 
 			<div class="innerContainer">
 				<!-- brewery summary window -->
-				<div class="summaryContainer box hide" data-bind="style: { display: summaryOpen() === false ? 'none' : 'inline' }, with: brewDetails()">
+				<div class="summaryContainer box hide" data-bind="style: { display: summaryOpen() === false ? 'none' : 'inline' }, with: $root.brewData().venues[$root.detailsIndex()]">
 					<div class="closeButton" data-bind="click: $parent.closeSummary">X close</div>
 					<div class="summary">
 						<div class="noWrap">
-							<div class="bLogoContainer"><img class="bLogo" data-bind="attr: { src: logoURL, alt: name }">
+							<div class="bLogoContainer" >
+                                <img class="bLogo" data-bind="attr: { src: $root.logos()[$root.detailsIndex()] }">
 			                </div>
 							<div class="venueInfo column">
 								<div class="breweryDetailName" data-bind="text: name"></div>
-								<div class="info" data-bind="with: $root.fSqrDetails()">Foursquare rating: <span class="rating" data-bind="text: rating"></span>/10</div>
-								<div class="info" data-bind="with: $root.untppdDetails()">Untappd rating: <span class="rating" data-bind="text: rating.rating_score"></span>/5</div>
+								<div data-bind="ifnot: $root.fSqr()[$root.detailsIndex()].failed()">
+									<div class="info" data-bind="with: $root.fSqr()[$root.detailsIndex()].fSqrdata()">Foursquare rating: <span class="rating" data-bind="text: rating"></span>/10</div>
+								</div>
+								<div data-bind="ifnot: $root.untppd()[$root.detailsIndex()].failed()">
+									<div class="info" data-bind="with: $root.untppd()[$root.detailsIndex()].untpdData().response.brewery">Untappd rating: <span class="rating" data-bind="text: rating.rating_score"></span>/5</div>
+								</div>
 								<div class="open" data-bind="click: $root.openDetails">Full Details...</div>
 							</div>
 						</div>
@@ -42,12 +57,12 @@
 				</div>
 
 				<!-- brewery details window -->
-				<div class="detailsConainer box hide" data-bind="style: { display: detailsOpen() === false ? 'none' : 'inline' }, with: brewDetails()">
+				<div class="detailsConainer box hide" data-bind="style: { display: detailsOpen() === false ? 'none' : 'inline' }, with: $root.brewData().venues[$root.detailsIndex()]">
 					<div class="closeButton" data-bind="click: $parent.closeDetails">X close</div>
 					<div class="details column">
 						<div class="summary noWrap">
-							<div class="bLogoContainer"><img class="bLogo" data-bind="attr: { src: logoURL, alt: name }"></div>
-							<div class="venueInfo column">
+							<div class="bLogoContainer"><img class="bLogo" data-bind="attr: { src: $root.logos()[$root.detailsIndex()] }"></div>
+							<div class="venueInfo column" data-bind="with: $root.brewData().venues[$root.detailsIndex()]">
 								<div class="breweryDetailName" data-bind="text: name"></div>
 								<div class="info" data-bind="text: location.address"></div>
 								<div class="info">
@@ -69,53 +84,67 @@
 						</div>
 
 						<!-- Foursquare details -->
-						<div class="apiInfo" data-bind="with: $root.fSqrDetails()">
-							<a class="info" data-bind="attr: { href: shortUrl }"><img class="apiLogo" src="images/foursquare_logo.png"></a>
-							<div class="summary column">
-
-								<!-- ko if: typeof menu != "undefined" -->
-								<div class="menu">
-									<a href="#" class="info" data-bind="url: { href: menu.mobileUrl }">Online Menu</a>
-								</div>
-								<!-- /ko -->
-							</div>
-							<div class="tipsBox">
-								<div class="apiHeader">Tips from Foursquare</div>
-								<div data-bind="foreach: tips.groups[0].items">
-									<div class="tipsItem" data-bind="visible: $index() < 3">
-										<span class="tips" data-bind="text: text"></span><br />
-										<span class="credit">-<span data-bind="text: user.firstName"></span> <span data-bind="text: user.lastName"></span></span>
+						<div data-bind="ifnot: $root.fSqr()[$root.detailsIndex()].failed()">
+							<div class="apiInfo" data-bind="with: $root.fSqr()[$root.detailsIndex()].fSqrdata()">
+								<a class="info" data-bind="attr: { href: shortUrl }"><img class="apiLogo" src="images/foursquare_logo.png"></a>
+								
+								<div class="summary column">
+									<!-- ko if: typeof menu != "undefined" -->
+									<div class="menu">
+										<a href="#" class="info" data-bind="url: { href: menu.mobileUrl }">Online Menu</a>
 									</div>
-
+									<!-- /ko -->
 								</div>
+								<div class="tipsBox">									
+									<div class="apiHeader">Tips from Foursquare</div>
+									<div data-bind="foreach: tips.groups[0].items">
+										<div class="tipsItem" data-bind="visible: $index() < 3">
+											<span class="tips" data-bind="text: text"></span><br />
+											<span class="credit">-<span data-bind="text: user.firstName"></span> <span data-bind="text: user.lastName"></span></span>
+										</div>
+									</div>	
+								</div>
+								<a class="info" data-bind="attr: { href: shortUrl }">View on Foursquare.com</a>	
 							</div>
-							<a class="info" data-bind="attr: { href: shortUrl }">View on Foursquare.com</a>
+						</div>
+						<div data-bind="if: $root.fSqr()[$root.detailsIndex()].failed()">
+							<div class="apiInfo">
+								<div><img class="apiLogo" src="images/foursquare_logo.png"></div>
+								<div>Sorry, we were unable to load data from Foursquare.</div>
+								<div>Please try again later.</div>
+							</div>
 						</div>
 						<!-- Untappd details -->
-						<div class="apiInfo" data-bind="with: $root.untppdDetails()">
-							<a class="info" data-bind="attr: { href: 'https://untappd.com/brewery/' + brewery_id }"><img class="apiLogo" src="images/untappd_logo.png"></a>
-							<div class="beerListBox">
-								<div class="apiHeader">Beer list from Untappd</div>
-								<div class="beerList" data-bind="foreach: beer_list.items">
-									<div class="beerListItem">
-										<div class="beerName" data-bind="text: beer.beer_name"></div>
-										<span data-bind="text: beer.beer_style"></span>,
-										<span class="beerAtt">ABV: </span><span data-bind="text: beer.beer_abv"></span>,
-										<span class="beerAtt">IBU: </span><span data-bind="text: beer.beer_ibu"></span>,
-										<span class="beerAtt">Score: </span><span class="rating" data-bind="text: beer.rating_score"></span>/5
+						<div data-bind="ifnot: $root.untppd()[$root.detailsIndex()].failed()">
+							<div class="apiInfo" data-bind="with: $root.untppd()[$root.detailsIndex()].untpdData().response.brewery">
+								<a class="info" data-bind="attr: { href: 'https://untappd.com/brewery/' + brewery_id }"><img class="apiLogo" src="images/untappd_logo.png"></a>
+								<div class="beerListBox">
+									<div class="apiHeader">Beer list from Untappd</div>
+									<div class="beerList" data-bind="foreach: beer_list.items">
+										<div class="beerListItem">
+											<div class="beerName" data-bind="text: beer.beer_name"></div>
+											<span data-bind="text: beer.beer_style"></span>,
+											<span class="beerAtt">ABV: </span><span data-bind="text: beer.beer_abv"></span>,
+											<span class="beerAtt">IBU: </span><span data-bind="text: beer.beer_ibu"></span>,
+											<span class="beerAtt">Score: </span><span class="rating" data-bind="text: beer.rating_score"></span>/5
+										</div>
 									</div>
-
 								</div>
-
+								<a class="info" data-bind="attr: { href: 'https://untappd.com/brewery/' + brewery_id }">View on Untappd.com</a>
 							</div>
-							<a class="info" data-bind="attr: { href: 'https://untappd.com/brewery/' + brewery_id }">View on Untappd.com</a>
+						</div>
+						<div data-bind="if: $root.untppd()[$root.detailsIndex()].failed()">
+							<div class="apiInfo">
+								<div><img class="apiLogo" src="images/untappd_logo.png"></div>
+								<div>Sorry, we were unable to load data from Utappd.</div>
+								<div>Please try again later.</div>
+							</div>
 						</div>
 					</div>
 				</div>
 
-
-
 				<div class="listContainer" data-bind="css : {'desktop' : listView() === false}">
+
 					<!-- search -->
 					<div class="search noWrap">
 		                <span>Search: </span>
@@ -130,16 +159,17 @@
 					    <div class="breweryBox breweryButton">
 					    	<div class="breweryItem desktop" data-bind="click: $root.openWindow">
 				                <a href="#" class="noWrap breweryButton">
-				                    <div class="bLogoContainer">
-				                    	<img class="bLogo" data-bind="attr: { src: logoURL, alt: name }">
+
+				                    <div class="bLogoContainer" >
+				                    	<img class="bLogo" data-bind="attr: { src: $parent.logos()[$index()], alt: name }">
 				                    </div>
 				                    <div class="breweryName breweryButton" data-bind="text: name"></div>
 				                </a>
 					    	</div>
 					    	<div class="breweryItem mobile" data-bind="click: $root.openDetails_mobile">
 				                <a href="#" class="noWrap breweryButton">
-				                    <div class="bLogoContainer">
-				                    	<img class="bLogo" data-bind="attr: { src: logoURL, alt: name }">
+				                    <div class="bLogoContainer" >
+				                    	<img class="bLogo" data-bind="attr: { src: $parent.logos()[$index()], alt: name }">
 				                    </div>
 				                    <div class="breweryName breweryButton" data-bind="text: name"></div>
 				                </a>
@@ -157,8 +187,6 @@
 			<div class="bottomBar"></div>
 
 		</div>
-
-
 
 	    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs5QWTUg_Ro-QNzmvdHVsfMILqmsntPZA"></script>
 	    <script type='text/javascript' src='js/libs/knockout-3.3.0.js'></script>
