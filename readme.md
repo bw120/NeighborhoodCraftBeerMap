@@ -11,6 +11,7 @@
 ###API's used
 - Foursquare.com
 - Untappd.com
+- Google Maps
 
 ###Summary
 This app was built for the Project 5 for the Udacity Front End Nanodegree. Running the app allows you to explore a selected number of breweries in the Boston area. You can view the ratings and information from Foursquare and Untapped. It provides a list of beers for each from Untappd. It also has tips from Foursquare and if available there is a link to their online menu.
