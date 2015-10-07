@@ -35,7 +35,7 @@ a {
     text-decoration: none;
     border-bottom: none;
     padding:  8px 8px 8px 0;
-    color: #004F9E;
+    color: #004f9e;
 }
 a:hover {
 	color: #640000;
@@ -51,11 +51,9 @@ a:hover {
 	width: 100%;
 }
 .column {
-/*    display: -webkit-flex; /* Safari */
     -webkit-flex-direction: column; /* Safari 6.1+ */*/
     display: flex;
     flex-direction: column;
-
 }
 
 
@@ -103,12 +101,12 @@ a:hover {
 	line-height: 47px;
 	vertical-align: bottom;
 	font-size: 12px;
-	color: #004F9E;
+	color: #004f9e;
 	margin-left: 10px;
 }
 
 .bottomBar {
-	background-color: #9E0000;
+	background-color: #9e0000;
 	color: white;
 
 	width: 100%;
@@ -150,7 +148,7 @@ a:hover {
 	background-color: white;
 	border-radius: 5px;
 	padding: 3%;
-	border: 2px solid #E6E6E6;
+	border: 2px solid #e6e6e6;
 
 }
 
@@ -244,7 +242,7 @@ a.breweryButton:hover {
 	width: 85%;
 }
 .breweryDetailName {
-	font-size: 12px;
+
 	font-weight: 600;
 	color: #004F9E;
 	padding-bottom: 1%;
@@ -252,16 +250,15 @@ a.breweryButton:hover {
 }
 
 .info {
-	font-size: 12px;
 	font-weight: 400;
 	color: black;
 }
 a.info:hover {
-	color: #9E0000;
+	color: #9e0000;
 }
 
 .rating {
-	color: #9E0000;
+	color: #9e0000;
 	font-size: 12px;
 }
 
@@ -274,10 +271,10 @@ a.info:hover {
 	z-index: 5;
 }
 .closeButton:hover {
-	color: #9E0000;
+	color: #9e0000;
 }
 .open {
-	color: #9E0000;
+	color: #9e0000;
 	font-size: 12px;
 	padding-top: 2%;
 }
@@ -290,12 +287,12 @@ a.info:hover {
 	width: 95%;
 	margin-top: 5%;
 	padding: 2%;
-	border: 1px solid #CCCCCC;
+	border: 1px solid #cccccc;
 
 }
 .tipsItem {
 	margin: 3%;
-	line-height: 70%;
+	line-height: 90%;
 }
 .tips {
 	font-size: 12px;
@@ -346,7 +343,7 @@ a.info:hover {
     /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); */
 }
 
-@media screen and (max-width: 575px) {
+@media screen and (max-width: 580px) and (orientation: portrait) {
 	.listContainer {
 		pointer-events: all;
 		position: absolute;
@@ -364,6 +361,7 @@ a.info:hover {
 
 	.search {
 		padding: 0 5% 0 5%;
+
 	}
 	.detailsConainer {
 		top: 40%;
@@ -376,6 +374,9 @@ a.info:hover {
 	.breweryDetailName {
 		font-size: 14px;
 	}
+	.info {
+		font-size: 14px;
+	}
 	.summaryContainer {
 		position: absolute;
 		bottom: 0;
@@ -385,7 +386,7 @@ a.info:hover {
 	.bLogoContainer {
 		width: 10%;
 		margin-right: 5%;
-		/*padding-bottom: 15%;*/
+
 	}
 	.breweryName {
 		font-size: 13px;
@@ -420,26 +421,110 @@ a.info:hover {
 		font-size: 10px;
 		font-weight: 400;
 	}
+}
+@media screen and (max-width: 580px) and (orientation: landscape) {
+	.listContainer {
+		pointer-events: all;
+		position: absolute;
+		padding-left: 5%;
+		top: 0;
+		bottom: 0p;
+		right: 0;
+		width: 95%;
+		z-index: 3;
+		background-color: white;
+	}
+	.list {
+		height: 90%;
+	}
 
+	.search {
+		padding: 0 5% 0 5%;
+	}
+	.detailsConainer {
+		top: 40%;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		padding-top: 8%;
 
+	}
+	.breweryDetailName {
+		font-size: 14px;
+
+	}
+	.markerInfo {
+		display: none;
+	}
+	.info {
+		font-size: 14px;
+	}
+	.summaryContainer {
+		position: absolute;
+		bottom: 0;
+		left: 1%;
+		right: 1%;
+	}
+	.bLogoContainer {
+		width: 10%;
+		margin-right: 5%;
+
+	}
+	.breweryName {
+		font-size: 13px;
+		font-weight: 500;
+
+	}
+	.desktop {
+		display: none;
+	}
+	.closeButton {
+		padding: 0 0 40px 40px;
+		font-size: 14px;
+	}
+	.open {
+		padding: 10 20px 10px 20px;
+	}
+	.bottomBar {
+		display: none;
+	}
+	.innerContainer{
+		height: calc(100% - 40px);
+	}
+	.topBar {
+		height: 30px;
+	}
+	.breweryBox {
+		height: 60px;
+	}
+	.toggle {
+		width: 100%;
+		height: 100%;
+		font-size: 10px;
+		font-weight: 400;
+	}
 }
 
-@media screen and (min-width: 576px) {
+
+@media screen and (min-width: 581px) {
 	.listContainer {
 		pointer-events: all;
 		position: absolute;
 		top: 10px;
 		bottom: 5px;
-		right: 20px;
+		right: 5px;
 		width: 30%;
 		z-index: 3;
-		display: inline;
+
 
 		background-color: white;
 		border-radius: 5px;
 		padding: 2%;
-		border: 2px solid #E6E6E6;
+		border: 2px solid #e6e6e6;
 
+	}
+	.search {
+		font-size: 14px;
 	}
 	.list {
 		height: 90%;
@@ -451,22 +536,22 @@ a.info:hover {
 	.detailsConainer {
 		top: 50%;
 		bottom: 5px;
-		right: 38%;
-		left: 20px;
+		right: 36%;
+		left: 5px;
 		padding-top: 5%;
 
 	}
 	.summaryContainer {
 		bottom: 5px;
-		left: 12%;
-		right: 48%;
+		left: 2%;
+		right: 38%;
 	}
 	.bLogoContainer {
 		width: 15%;
 		margin-right: 5%;
 	}
 	.breweryName {
-		font-size: 14px;
+		font-size: 13px;
 		font-weight: 400;
 	}
 	.mobile {
@@ -484,6 +569,12 @@ a.info:hover {
 	.bottomBar {
 		height: 10px;
 	}
+	.breweryDetailName {
+		font-size: 14px;
+	}
+	.info {
+		font-size: 12px;
+	}
 
 }
 
@@ -496,12 +587,12 @@ a.info:hover {
 		right: 20px;
 		width: 30%;
 		z-index: 3;
-		display: inline;
+
 
 		background-color: white;
 		border-radius: 5px;
 		padding: 2%;
-		border: 2px solid #E6E6E6;
+		border: 2px solid #e6e6e6;
 	}
 	.list {
 		height: 90%;
@@ -544,6 +635,12 @@ a.info:hover {
 	}
 	.bottomBar {
 		height: 30px;
+	}
+	.breweryDetailName {
+		font-size: 14px;
+	}
+	.info {
+		font-size: 12px;
 	}
 
 }

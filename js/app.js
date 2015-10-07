@@ -2,6 +2,7 @@
 
 //Foursquare API
 var getFsqr = function(venues) {
+  'use strict';
   var self = this;
   self.failed = ko.observable(true);  //variable gets sets to false when API info becomes available
   self.fSqrdata = ko.observableArray();
@@ -12,9 +13,9 @@ var getFsqr = function(venues) {
       self.fSqrdata(JSON.parse(localStorage.getItem(venues)));
       self.failed(false);
 
+
     //if not in local storage submit ajax reques
     } else {
-      t
       //set up URL for Ajax request
       var theURL = "https://api.foursquare.com/v2/venues/" + venues + "?client_id=V5XZKQRSRXGVGCGN5U3YIFCXTIAZWCZA01V3U5ICI4KRNXOX&client_secret=0ATJHEHUGP41GLOHJJS4ACJC3ENKG311BRW2KR510Y2FPSPY&v=20130815";
 
@@ -32,12 +33,13 @@ var getFsqr = function(venues) {
         self.failed(true);
         console.log("Failed loading foursquare data");
       });
-    };
+    }
 };
 
 //Untappd.com API
 //This API only allows 100 request per hour. Need to save data to local storage so you don't over tax usage rate
 var getUntppdInfo = function(brewID) {
+  'use strict';
   var self = this;
   var uData;
   self.failed = ko.observable(true); //variable gets sets to false when API info becomes available
@@ -49,6 +51,7 @@ var getUntppdInfo = function(brewID) {
       uData = JSON.parse(localStorage.getItem(brewID));
       self.failed(false);
       self.untpdData(uData);
+
     } else {
       //if not in storage, get from server
       //set up URL for Ajax request
@@ -66,36 +69,14 @@ var getUntppdInfo = function(brewID) {
         console.log("Failed loading Untappd");
         self.failed(true);
       });
-    };
+    }
 };
 
-
-//ViewModel
-var beerMapViewModel = function() {
-  var self = this;
-
-  //Get brewery Data from model
-  self.brewData = ko.observable( new breweryModel() );
-  var venues = self.brewData().venues;
-
-  //variables to control which screens show
-  self.listView = ko.observable(true); //for small screens this controls whether the list or map is visible
-  self.detailsOpen = ko.observable(false);
-  self.summaryOpen = ko.observable(false);
-  self.detailsIndex = ko.observable(); //index of which item to display in summary or details window.
-  var previouseMode = true; //holds previous state of self.detailsIndex so that it can be restored when details window closes
-
-
-  //Initialize and set up map
-  var maxZoom = 13; //need to set amount map zooms in when there are very few markers shown on the map otherwise it zooms in way too much
-  var currMapCenter; //stores current map center to be used for browser resize
-  var mapBounds;
-  var mapCenterXoffset = "-750"; //offset position of map to account for the search and brewery list covering up some of the map
-  var mapCenterYoffset = "-370"; //offset position of map to account for details window covering up map
+//map
+var Map = function() {
 
   //default bounds
-  bounds = new google.maps.LatLng(42.3600825, -71.05888010000001);
-
+  this.mapBounds = new google.maps.LatLng(42.3600825, -71.05888010000001);
   //set up map style options
   var customMapType = new google.maps.StyledMapType([
     {
@@ -106,7 +87,7 @@ var beerMapViewModel = function() {
     },{
       "featureType": "water",
       "stylers": [
-        { "color": "#004F9E" }
+        { "color": "#004f9e" }
       ]
     },{
       "featureType": "landscape",
@@ -126,8 +107,8 @@ var beerMapViewModel = function() {
 
   //set up map options
   var mapOptions = {
-    zoom: 18,
-    center: bounds,
+    center: this.mapBounds,
+    zoom: 14,
     mapTypeControl: false,
     zoomControl: true,
     zoomControlOptions: {
@@ -137,26 +118,61 @@ var beerMapViewModel = function() {
   };
 
   //initialize the map
-  var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-  map.mapTypes.set(customMapTypeId, customMapType);
-  map.setMapTypeId(customMapTypeId);
+  this.map = new google.maps.Map(document.getElementById("map"), mapOptions) ;
+  this.map.mapTypes.set(customMapTypeId, customMapType);
+  this.map.setMapTypeId(customMapTypeId);
+
+  //checks if map has loaded
+  google.maps.event.addListenerOnce(this.map, 'idle', function(){
+    vm.mapLoaded(true); //updates the observable in the viewModel
+  });
+
+};
 
 
-  //calculates an offset point used to make room on map where the 
+
+
+//ViewModel
+var beerMapViewModel = function() {
+  var self = this;
+
+  //Get brewery Data from model
+  self.brewData = ko.observable( new breweryModel() );
+  var venues = self.brewData().venues;
+
+  self.mapLoaded = ko.observable(false); //is map loaded
+
+  //variables to control which screens show
+  self.listView = ko.observable(true); //for small screens this controls whether the list or map is visible
+  self.detailsOpen = ko.observable(false);
+  self.summaryOpen = ko.observable(false);
+  self.detailsIndex = ko.observable(); //index of which item to display in summary or details window.
+  var previouseMode = true; //holds previous state of self.detailsIndex so that it can be restored when details window closes
+
+  //variables to control map
+  var maxZoom = 12; //need to set amount map zooms in when there are very few markers shown on the map otherwise it zooms in way too much
+  var currMapCenter; //stores current map center to be used for browser resize
+  var mapBounds;
+  var boundsData;
+  var infowindow;
+
+
+  //calculates an offset point used to make room on map where the
   //list and details window covering up portions of the map
   var getOffsetPoint = function (latlng, offsetx, offsety) {
 
-    var scale = Math.pow(2, map.getZoom());
+    var scale = Math.pow(2, map.map.getZoom());
 
-    if (map.getProjection()) {
-      var wcCenter = map.getProjection().fromLatLngToPoint(latlng);
+    if (map.map.getProjection()) {
+      var wcCenter = map.map.getProjection().fromLatLngToPoint(latlng);
       var pOffset = new google.maps.Point((offsetx/scale) || 0, (offsety/scale) || 0);
 
       var wcNewCenter = new google.maps.Point(
         wcCenter.x - pOffset.x,
         wcCenter.y - pOffset.y
       );
-      var newCenter = map.getProjection().fromPointToLatLng(wcNewCenter)
+
+      var newCenter = map.map.getProjection().fromPointToLatLng(wcNewCenter);
       return newCenter;
     } else {
       return latlng;
@@ -165,15 +181,17 @@ var beerMapViewModel = function() {
 
   //set bounds of map based on data or search
   var setBounds = function(data) {
+    boundsData = data;
+    var lat;
+    var lng;
+    var offsetPoint;
+    var mostEast = data[0].location.lng;
+    var mostSouth = data[0].location.lat;
+    var newBounds = new google.maps.LatLngBounds();
+    map.map.setZoom(10);
 
     if (data.length > 0) {
-      var lat;
-      var lng;
-      var offsetPoint;
-      var mostEast = data[0].location.lng;
-      var mostSouth = data[0].location.lat;
-      var newBounds = new google.maps.LatLngBounds();
-      map.setZoom(11);
+
 
       //add each location to the map bounds
       for (var i = 0; i < data.length; i++) {
@@ -193,26 +211,36 @@ var beerMapViewModel = function() {
       }
 
       offsetPoint = new google.maps.LatLng(mostSouth, mostEast);
-      var yOffset = (self.detailsOpen() === true) ? mapCenterYoffset : "0"; //if details open it gives more room at bottom of map
-      var xOffset = (self.listView() === true) ? mapCenterXoffset : "0"; //if list is not visible on (on Mobile sizes) it doesn't give extra room on right
+      var yOffset = (self.detailsOpen() === true) ? "-8" : "0"; //if details open it gives more room at bottom of map
+      var xOffset = 0;
+
+      if (self.detailsOpen() === true && self.listView() === true) {
+        xOffset = "-20";
+      } 
+
       newBounds.extend(getOffsetPoint(offsetPoint, xOffset, yOffset));
 
-      map.fitBounds(newBounds);
+      map.map.fitBounds(newBounds);
 
-      if (map.getZoom() > maxZoom) { map.setZoom(maxZoom)}; //make sure it doesn't zoom in too far
+
+      if (map.map.getZoom() > maxZoom) { map.map.setZoom(maxZoom);} //make sure it doesn't zoom in too far
     }
 
     //set map center to be referenced incase of browser resize
-    currMapCenter = map.getCenter();
+    currMapCenter = map.map.getCenter();
     mapBounds = newBounds;
+
   };
 
   //re-center map when resize browser
   window.addEventListener('resize', function(e) {
-    map.fitBounds(mapBounds);
-    map.setCenter(currMapCenter);
+    setBounds(boundsData);
   });
 
+  //setup listener on markers
+  var addMarkerListner = function(index) {
+    google.maps.event.addListener(self.mapMarkers()[index], 'click', function(e) {openInfoWindow(this);});
+  };
 
   //put markers on the map
   self.mapMarkers = ko.observableArray(); //store markers as an array
@@ -222,41 +250,42 @@ var beerMapViewModel = function() {
     var markerArr = [];
 
     //make sure map is loaded
-    if (map) {
+    if (self.mapLoaded()) {
 
       for (i = 0; i < self.brewData().venues.length; i++) {
         markerArr.push( new google.maps.Marker({
           position: {lat: self.brewData().venues[i].location.lat, lng: self.brewData().venues[i].location.lng},
-          map: map,
+          map: map.map,
           title: String(i) //set title as the key in breweryInfo array so it is easier to pass into map InfoWindow
           }));
       }
+      //assign markers to observable array so we can control them later
+      self.mapMarkers(markerArr);
+
+      //setup map infowindow and add google event listner
+      infowindow = new google.maps.InfoWindow({maxWidth: 200});
+      for (var i = 0; i < self.mapMarkers().length; i++) {
+        addMarkerListner(i);
+      }
     }
-
-    //assign markers to observable array so we can control them later
-    self.mapMarkers(markerArr);
   }, self);
-
-  //setup map infowindow and add google event listner
-  var infowindow = new google.maps.InfoWindow();
-  for (var i = 0; i < self.mapMarkers().length; i++) {
-    google.maps.event.addListener(self.mapMarkers()[i], 'click', function(e) {openInfoWindow(this);});
-  };
 
 
   //set content for map info window
   var markerContent = function(data) {
-    var content = "<div class='infoWindow'><div class='breweryDetailName'>" + data.name + "</div><span class='info'>" +
-    data.location.address + "<br />" + data.location.city + ", " + data.location.state + " " + data.location.postalCode + " </span></div>";
+    var content = "<div class='infoWindow'><div class='breweryDetailName'>" + data.name + "</div><span class='markerInfo info'>" + data.location.city + ", " + data.location.state + " " + data.location.postalCode + " </span></div>";
     return content;
   };
 
   //open info window and display info on summary div
   var openInfoWindow = function(marker) {
-      self.openSummary(venues[marker.getTitle()]); //display on summary window
+      if (self.detailsOpen() === false) {
+        self.openSummary(venues[marker.getTitle()]); //display on summary window
+      }
       infowindow.setContent(markerContent(venues[marker.getTitle()])); //set content
-      infowindow.open(map, marker); //open info window
-      map.panTo(marker.getPosition()); //center map on marker
+      infowindow.open(map.map, marker); //open info window
+      var xOffset = (self.listView() === true) ? -125 : "0";
+      map.map.panTo(getOffsetPoint(marker.getPosition(), xOffset)); //center map on marker
       animateMarker(marker); //make marker bounce
   };
 
@@ -270,8 +299,8 @@ var beerMapViewModel = function() {
 
   //When item on menu is clicked, open infoWindow and update info on details window
   self.openWindow = function(data) {
-
-    openInfoWindow(self.mapMarkers()[data.index]);
+    self.listView(true);
+    if (self.mapLoaded() === true) {openInfoWindow(self.mapMarkers()[data.index]);}
 
     if (self.detailsOpen() === true) {
       showHideMarkers(self.mapMarkers(), [data.index]);
@@ -286,32 +315,103 @@ var beerMapViewModel = function() {
       markers[i].setMap(null);
     }
     for (var n = 0; n < markersToShow.length; n++) {
-      markers[markersToShow[n]].setMap(map);
+      markers[markersToShow[n]].setMap(map.map);
     }
   };
 
-  //Search
+
+  //toggle between list view and map view on small screen sizes
+  self.toggleView = function() {
+    if (self.listView() === false) {
+      self.listView(true);
+    } else {
+      self.listView(false);
+      self.detailsOpen(false);
+      setBounds(boundsData);
+    }
+    previouseMode = self.listView();
+  };
+
+  //sets some additional variables when opening details on small screens
+  self.openDetails_mobile = function(data) {
+    previouseMode = self.listView();//needs to remember previous view for when window closes
+    self.listView(false); //turns off list view so list is not visible
+    self.openDetails(data);
+  };
+
+  //opens details window
+  self.openDetails = function(data) {
+    self.closeSummary();
+    self.detailsIndex(data.index);
+    self.detailsOpen(true);
+
+    //show only the marker for selected venue
+    showHideMarkers(self.mapMarkers(), [data.index]);
+    //open map marker infowindow
+    openInfoWindow(self.mapMarkers()[self.detailsIndex()]);
+    setBounds([data]); //set bounds to just this one item
+    map.map.setZoom(14); //zoom in
+  };
+
+  //open summary window and update index of item to be shown
+  self.openSummary = function(data) {
+    self.detailsIndex(data.index);
+    self.summaryOpen(true);
+
+  };
+
+  //close summary window
+  self.closeSummary = function() {
+    self.summaryOpen(false);
+  };
+
+  //close details window
+  self.closeDetails = function() {
+    var search = self.searchKey(); //remeber search input
+
+    //close window
+    self.detailsOpen(false);
+
+    //reset search to that of before details window was opened
+    if ( self.activeSearch() === true ) {
+      self.cancelSearch();
+      self.clearSearch();
+      self.searchKey(search);
+    } else {
+      self.clearSearch();
+      self.cancelSearch();
+    }
+    //reset the view (map or list on small screen sizes) to previous setting
+    self.listView(previouseMode);
+  };
+    //Search
   self.searchKey = ko.observable("Search"); //default value displays in search box until you click on it
   self.activeSearch = ko.observable(false); //is the user activly trying to search
   //clear search box when user clicks and set activeSearch to true
   self.clearSearch = function() {
+
     if (self.activeSearch() === false) {
       self.searchKey(""); //remove "search" from text input
       self.activeSearch(true);
+
     }
   };
 
   //cancel/clear search
   self.cancelSearch = function() {
+    self.detailsOpen(false);
     self.activeSearch(false);
+    infowindow.close();
     self.searchKey("Search"); //put "search" back into text input when search is no longer active
   };
 
   //as the user types a query this function checks user input against venue name
   self.breweryDisplay = ko.computed(function() {
+
+    self.closeSummary();
     var searchMatches = [];
     var markersToDisplay = [];
-    if (self.activeSearch() === true && map) {
+    if (self.activeSearch() === true) {
 
       var searchArr = self.searchKey().toLocaleLowerCase().split(" ");
       var brewName;
@@ -319,7 +419,7 @@ var beerMapViewModel = function() {
       var wordsArr;
       var strLength;
 
-      //go through the names of each brewery names and make an array of each word. 
+      //go through the names of each brewery names and make an array of each word.
       //then compare each word to the user input
       for (i = 0; i < self.brewData().venues.length; i++) {
           brewName = self.brewData().venues[i].name;
@@ -346,15 +446,21 @@ var beerMapViewModel = function() {
     } else {
       //if user is not searching it displays all venues
       searchMatches = self.brewData().venues;
-      for (var n = 0; n < searchMatches.length; n++ ) {
-        markersToDisplay.push(n);
+      for (var z = 0; z < searchMatches.length; z++ ) {
+        markersToDisplay.push(z);
       }
 
     }
-    //pass the array to function to hide/show markers
-    showHideMarkers(self.mapMarkers(), markersToDisplay);
-    //reset bounds based on search results
-    setBounds(searchMatches);
+    if (self.mapLoaded() && searchMatches.length > 0) {
+      //pass the array to function to hide/show markers
+      showHideMarkers(self.mapMarkers(), markersToDisplay);
+      //reset bounds based on search results
+      setBounds(searchMatches);
+      if (self.detailsOpen() === false ) {
+        map.map.setCenter(getOffsetPoint(mapBounds.getCenter(), "-100"));
+      }
+
+    }
     return searchMatches;
   }, self);
 
@@ -363,15 +469,15 @@ var beerMapViewModel = function() {
   self.fSqr = ko.observableArray();
 
   for (var i = 0; i < venues.length; i++) {
-    self.fSqr().push(new getFsqr(venues[i].fSqrID))
-  };
+    self.fSqr().push(new getFsqr(venues[i].fSqrID));
+  }
 
   //get info from Untappd for each brewery
   self.untppd = ko.observableArray();
 
-  for (var i = 0; i < venues.length; i++) {
-    self.untppd.push(new getUntppdInfo(venues[i].untppdID));
-  };
+  for (var t = 0; t < venues.length; t++) {
+    self.untppd.push(new getUntppdInfo(venues[t].untppdID));
+  }
 
   //sets generic logo for each venue and updates with actual logo if/when API returns logo URL
   self.logos = ko.computed(function() {
@@ -385,68 +491,12 @@ var beerMapViewModel = function() {
     }
     return logoArr;
   }, self);
-
-  //toggle between list view and map view on small screen sizes
-  self.toggleView = function() {
-    if (self.listView() === false) {
-      self.listView(true);
-    } else {
-      self.listView(false);
-    }
-    previouseMode = self.listView();
-  };
-
-  //sets some additional variables when opening details on small screens
-  self.openDetails_mobile = function(data) {
-    previouseMode = self.listView();//needs to remember previous view for when window closes
-    self.listView(false); //turns off list view so list is not visible
-    self.openDetails(data);
-  };
-
-  //opens details window
-  self.openDetails = function(data) {
-
-    self.detailsIndex(data.index);
-    self.detailsOpen(true);
-
-    //show only the marker for selected venue
-    showHideMarkers(self.mapMarkers(), [data.index]);
-    //open map marker infowindow
-    openInfoWindow(self.mapMarkers()[self.detailsIndex()]);
-    map.setZoom(14); //zoom in
-    setBounds([data]); //set bounds to just this one item
-  };
-
-  //open summary window and update index of item to be shown
-  self.openSummary = function(data) {
-    self.detailsIndex(data.index);
-    self.summaryOpen(true);
-  };
-
-  //close summary window
-  self.closeSummary = function(data) {
-    self.summaryOpen(false);
-  };
-
-  //close details window
-  self.closeDetails = function(data) {
-    var search = self.searchKey(); //remeber search input
-
-    //close window
-    self.detailsOpen(false);
-
-    //reset search to that of before details window was opened
-    if ( self.activeSearch() === true ) {
-      self.cancelSearch();
-      self.clearSearch();
-      self.searchKey(search);
-    } else {
-      self.clearSearch();
-      self.cancelSearch();
-    }
-    //reset the view (map or list on small screen sizes) to previous setting
-    self.listView(previouseMode);
-  };
 };
 
-ko.applyBindings(new beerMapViewModel());
+var vm = new beerMapViewModel();
+ko.applyBindings(vm);
+
+var map;
+function initMap() {
+  map = new Map();
+}
