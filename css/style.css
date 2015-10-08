@@ -8,6 +8,7 @@
 .icon {
 	font-size: 16px;
 }
+
 .listIcon {
 	max-width: 20px;
 	max-height: 20px;
@@ -20,8 +21,6 @@ html, body {
 	margin: 0;
 	padding: 0;
 	background-color: #676767;
-
-
 }
 
 input {
@@ -37,12 +36,15 @@ a {
     padding:  8px 8px 8px 0;
     color: #004f9e;
 }
+
 a:hover {
 	color: #640000;
 }
+
 .hide {
 	display: none;
 }
+
 .noWrap {
 	display: flex;
 	display: -webkit-flex;
@@ -50,12 +52,12 @@ a:hover {
 	-webkit-flex-wrap: nowrap;
 	width: 100%;
 }
+
 .column {
     -webkit-flex-direction: column; /* Safari 6.1+ */*/
     display: flex;
     flex-direction: column;
 }
-
 
 .container {
 	position: relative;
@@ -78,24 +80,28 @@ a:hover {
 	border-bottom: 1px solid #640000;
 	padding: 5px;
 }
-.topBarLeft{
 
+.topBarLeft{
 	width: 90%;
 }
+
 .topBarRight {
 	width: 10%;
 	padding: 1%;
 }
+
 .logo {
 	height: 30px;
 	width: 30px;
 }
+
 .header {
 	height: 30px;
 	line-height: 40px;
 	vertical-align: bottom;
 	font-size: 20px;
 }
+
 .subHead {
 	height: 30px;
 	line-height: 47px;
@@ -108,7 +114,6 @@ a:hover {
 .bottomBar {
 	background-color: #9e0000;
 	color: white;
-
 	width: 100%;
 	top: -110%;
 	border-top: 1px solid #640000;
@@ -149,7 +154,6 @@ a:hover {
 	border-radius: 5px;
 	padding: 3%;
 	border: 2px solid #e6e6e6;
-
 }
 
 .listContainer {
@@ -160,12 +164,10 @@ a:hover {
 
 .list {
 	position: relative;
-
 	width: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
-
 
 .bLogo {
 	width: 100%;
@@ -211,15 +213,14 @@ a.breweryButton:hover {
 .innerContainer {
 	position: relative;
 	width: 100%;
-
 }
 
 .detailsConainer {
 	pointer-events: all;
 	position: absolute;
 	z-index: 2;
-
 }
+
 .details {
 	position: relative;
 	height: 90%;
@@ -227,8 +228,8 @@ a.breweryButton:hover {
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: 2%;
-
 }
+
 .summaryContainer {
 	position: absolute;
 	background-color: white;
@@ -240,21 +241,22 @@ a.breweryButton:hover {
 	width: 85%;
 }
 .breweryDetailName {
-
 	font-weight: 600;
-	color: #004F9E;
+	color: #004f9e;
 	padding-bottom: 1%;
 	max-width: 95%;
 }
+
 .markerName {
 	font-weight: 600;
-	color: #004F9E;
+	color: #004f9e;
 }
 
 .info {
 	font-weight: 400;
 	color: black;
 }
+
 a.info:hover {
 	color: #9e0000;
 }
@@ -272,9 +274,11 @@ a.info:hover {
 	color: gray;
 	z-index: 5;
 }
+
 .closeButton:hover {
 	color: #9e0000;
 }
+
 .open {
 	color: #9e0000;
 	font-size: 12px;
@@ -285,26 +289,30 @@ a.info:hover {
 	height: 15px;
 	margin-bottom: 2%;
 }
+
 .apiInfo {
 	width: 95%;
 	margin-top: 5%;
 	padding: 2%;
 	border: 1px solid #cccccc;
-
 }
+
 .tipsItem {
 	margin: 3%;
 	line-height: 90%;
 }
+
 .tips {
 	font-size: 12px;
 	font-style: italic;
 	padding: 1%;
 }
+
 .credit {
 	font-size: 10px;
 	padding: 1%;
 }
+
 .menu {
 	margin-bottom: 2%;
 }
@@ -312,18 +320,21 @@ a.info:hover {
 .apiHeader {
 	font-size: 14px;
 }
+
 .beerListItem {
 	font-size: 12px;
-
 }
+
 .beerList {
 	margin: 2%;
 	line-height: 120%;
 }
+
 .beerName {
 	font-weight: bold;
 	color: #004F9E;
 }
+
 .beerAtt {
 	font-weight: bold;
 }
@@ -334,15 +345,11 @@ a.info:hover {
 
 ::-webkit-scrollbar-track {
 	background-color: white;
-    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); */
-
 }
 
 ::-webkit-scrollbar-thumb {
 	background-color: #a4a4a4;
-
     border-radius: 20px;
-    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); */
 }
 
 @media screen and (max-width: 580px) {
@@ -357,22 +364,24 @@ a.info:hover {
 		z-index: 3;
 		background-color: white;
 	}
+
 	.list {
 		height: 90%;
 	}
 
+
 	.search {
 		padding: 0 5% 0 5%;
-
 	}
+
 	.detailsConainer {
 		top: 40%;
 		bottom: 0;
 		right: 0;
 		left: 0;
 		padding-top: 6%;
-
 	}
+
 	.breweryDetailName {
 		font-size: 13px;
 	}
@@ -384,58 +393,67 @@ a.info:hover {
 	.info {
 		font-size: 14px;
 	}
+
 	.summaryContainer {
 		position: absolute;
 		bottom: 0;
 		left: 1%;
 		right: 1%;
 	}
+
 	.bLogoContainer {
 		width: 10%;
 		margin-right: 5%;
-
 	}
+
 	.breweryName {
 		font-size: 13px;
 		font-weight: 500;
-
 	}
+
 	.desktop {
 		display: none;
 	}
+
 	.closeButton {
 		padding: 0 0px 40px 40px;
 		font-size: 14px;
 	}
+
 	.open {
 		padding: 10 20px 10px 20px;
 	}
+
 	.bottomBar {
 		display: none;
 	}
+
 	.innerContainer{
 		height: calc(100% - 40px);
 	}
+
 	.topBar {
 		height: 30px;
 	}
+
 	.breweryBox {
 		height: 60px;
 	}
+
 	.toggle {
 		width: 100%;
 		height: 100%;
 		font-size: 10px;
 		font-weight: 400;
 	}
+
 	.markerInfo {
 		display: none;
 	}
 }
 
-
-
 @media screen and (min-width: 581px) {
+
 	.listContainer {
 		pointer-events: all;
 		position: absolute;
@@ -444,73 +462,83 @@ a.info:hover {
 		right: 5px;
 		width: 30%;
 		z-index: 3;
-
-
 		background-color: white;
 		border-radius: 5px;
 		padding: 2%;
 		border: 2px solid #e6e6e6;
-
 	}
+
 	.search {
 		font-size: 14px;
 	}
+
 	.list {
 		height: 90%;
 	}
+
 	.toggle {
 		display: none;
-
 	}
+
 	.detailsConainer {
 		top: 50%;
 		bottom: 5px;
 		right: 36%;
 		left: 5px;
 		padding-top: 5%;
-
 	}
+
 	.summaryContainer {
 		bottom: 5px;
 		left: 2%;
 		right: 38%;
 	}
+
 	.bLogoContainer {
 		width: 15%;
 		margin-right: 5%;
 	}
+
 	.breweryName {
 		font-size: 13px;
 		font-weight: 400;
 	}
+
 	.mobile {
 		display: none;
 	}
+
 	.innerContainer{
 		height: calc(100% - 50px);
 	}
+
 	.topBar {
 		height: 30px;
 	}
+
 	.breweryBox {
 		height: 55px;
 	}
+
 	.bottomBar {
 		height: 10px;
 	}
+
 	.breweryDetailName {
 		font-size: 14px;
 	}
+
 	.markerName {
 		font-size: 13px;
 	}
+
 	.info {
 		font-size: 12px;
 	}
-
 }
 
 @media screen and (min-width: 800px) {
+
 	.listContainer {
 		pointer-events: all;
 		position: absolute;
@@ -519,19 +547,20 @@ a.info:hover {
 		right: 20px;
 		width: 30%;
 		z-index: 3;
-
-
 		background-color: white;
 		border-radius: 5px;
 		padding: 2%;
 		border: 2px solid #e6e6e6;
 	}
+
 	.list {
 		height: 90%;
 	}
+
 	.toggle {
 		display: none;
 	}
+
 	.detailsConainer {
 		top: 50%;
 		bottom: 10px;
@@ -539,41 +568,51 @@ a.info:hover {
 		left: 20px;
 		padding-top: 3%;
 	}
+
 	.summaryContainer {
 		bottom: 10px;
 		left: 12%;
 		right: 48%;
 	}
+
 	.bLogoContainer {
 		width: 15%;
 		margin-right: 5%;
 	}
+
 	.breweryName {
 		font-size: 14px;
 		font-weight: 600;
-
 	}
+
 	.mobile {
 		display: none;
 	}
+
 	.innerContainer{
 		height: calc(100% - 80px);
 	}
+
 	.topBar {
 		height: 40px;
 	}
+
 	.breweryBox {
 		height: 45px;
 	}
+
 	.bottomBar {
 		height: 30px;
 	}
+
 	.breweryDetailName {
 		font-size: 14px;
 	}
+
 	.markerName {
 		font-size: 14px;
 	}
+	
 	.info {
 		font-size: 12px;
 	}
