@@ -147,11 +147,10 @@ var beerMapViewModel = function() {
   self.detailsOpen = ko.observable(false);
   self.summaryOpen = ko.observable(false);
   self.detailsIndex = ko.observable(); //index of which item to display in summary or details window.
-  var previouseMode = true; //holds previous state of self.detailsIndex so that it can be restored when details window closes
+  var previouseMode = true; //holds previous state of self.listView so that it can be restored when details window closes
 
   //variables to control map
   var maxZoom = 12; //need to set amount map zooms in when there are very few markers shown on the map otherwise it zooms in way too much
-  var currMapCenter; //stores current map center to be used for browser resize
   var mapBounds;
   var boundsData;
   var infowindow;
@@ -226,8 +225,7 @@ var beerMapViewModel = function() {
       if (map.map.getZoom() > maxZoom) { map.map.setZoom(maxZoom);} //make sure it doesn't zoom in too far
     }
 
-    //set map center to be referenced incase of browser resize
-    currMapCenter = map.map.getCenter();
+    //set map bounds to be referenced later
     mapBounds = newBounds;
 
   };
