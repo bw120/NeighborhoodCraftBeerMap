@@ -188,7 +188,7 @@ var beerMapViewModel = function() {
     var mostEast = data[0].location.lng;
     var mostSouth = data[0].location.lat;
     var newBounds = new google.maps.LatLngBounds();
-    map.map.setZoom(10);
+    map.map.setZoom(9);
 
     if (data.length > 0) {
 
@@ -211,7 +211,7 @@ var beerMapViewModel = function() {
       }
 
       offsetPoint = new google.maps.LatLng(mostSouth, mostEast);
-      var yOffset = (self.detailsOpen() === true) ? "-8" : "0"; //if details open it gives more room at bottom of map
+      var yOffset = (self.detailsOpen() === true) ? "-20" : "0"; //if details open it gives more room at bottom of map
       var xOffset = 0;
 
       if (self.detailsOpen() === true && self.listView() === true) {
@@ -263,7 +263,7 @@ var beerMapViewModel = function() {
       self.mapMarkers(markerArr);
 
       //setup map infowindow and add google event listner
-      infowindow = new google.maps.InfoWindow({maxWidth: 200});
+      infowindow = new google.maps.InfoWindow({maxWidth: 250});
       for (var i = 0; i < self.mapMarkers().length; i++) {
         addMarkerListner(i);
       }
@@ -273,7 +273,7 @@ var beerMapViewModel = function() {
 
   //set content for map info window
   var markerContent = function(data) {
-    var content = "<div class='infoWindow'><div class='breweryDetailName'>" + data.name + "</div><span class='markerInfo info'>" + data.location.city + ", " + data.location.state + " " + data.location.postalCode + " </span></div>";
+    var content = "<div class='infoWindow'><div class='markerName'>" + data.name + "</div><span class='markerInfo info'>" + data.location.city + ", " + data.location.state + " </span></div>";
     return content;
   };
 
@@ -300,7 +300,7 @@ var beerMapViewModel = function() {
   //When item on menu is clicked, open infoWindow and update info on details window
   self.openWindow = function(data) {
     self.listView(true);
-    if (self.mapLoaded() === true) {openInfoWindow(self.mapMarkers()[data.index]);}
+    openInfoWindow(self.mapMarkers()[data.index]);
 
     if (self.detailsOpen() === true) {
       showHideMarkers(self.mapMarkers(), [data.index]);
@@ -350,7 +350,7 @@ var beerMapViewModel = function() {
     //open map marker infowindow
     openInfoWindow(self.mapMarkers()[self.detailsIndex()]);
     setBounds([data]); //set bounds to just this one item
-    map.map.setZoom(14); //zoom in
+    map.map.setZoom(13); //zoom in
   };
 
   //open summary window and update index of item to be shown

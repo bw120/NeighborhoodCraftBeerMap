@@ -168,9 +168,7 @@ a:hover {
 
 
 .bLogo {
-
 	width: 100%;
-	height: 100%;
 }
 
 .breweryItem {
@@ -247,6 +245,10 @@ a.breweryButton:hover {
 	color: #004F9E;
 	padding-bottom: 1%;
 	max-width: 95%;
+}
+.markerName {
+	font-weight: 600;
+	color: #004F9E;
 }
 
 .info {
@@ -343,7 +345,7 @@ a.info:hover {
     /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); */
 }
 
-@media screen and (max-width: 580px) and (orientation: portrait) {
+@media screen and (max-width: 580px) {
 	.listContainer {
 		pointer-events: all;
 		position: absolute;
@@ -368,12 +370,17 @@ a.info:hover {
 		bottom: 0;
 		right: 0;
 		left: 0;
-		padding-top: 8%;
+		padding-top: 6%;
 
 	}
 	.breweryDetailName {
-		font-size: 14px;
+		font-size: 13px;
 	}
+
+	.markerName {
+		font-size: 12px;
+	}
+
 	.info {
 		font-size: 14px;
 	}
@@ -421,89 +428,11 @@ a.info:hover {
 		font-size: 10px;
 		font-weight: 400;
 	}
-}
-@media screen and (max-width: 580px) and (orientation: landscape) {
-	.listContainer {
-		pointer-events: all;
-		position: absolute;
-		padding-left: 5%;
-		top: 0;
-		bottom: 0p;
-		right: 0;
-		width: 95%;
-		z-index: 3;
-		background-color: white;
-	}
-	.list {
-		height: 90%;
-	}
-
-	.search {
-		padding: 0 5% 0 5%;
-	}
-	.detailsConainer {
-		top: 40%;
-		bottom: 0;
-		right: 0;
-		left: 0;
-		padding-top: 8%;
-
-	}
-	.breweryDetailName {
-		font-size: 14px;
-
-	}
 	.markerInfo {
 		display: none;
 	}
-	.info {
-		font-size: 14px;
-	}
-	.summaryContainer {
-		position: absolute;
-		bottom: 0;
-		left: 1%;
-		right: 1%;
-	}
-	.bLogoContainer {
-		width: 10%;
-		margin-right: 5%;
-
-	}
-	.breweryName {
-		font-size: 13px;
-		font-weight: 500;
-
-	}
-	.desktop {
-		display: none;
-	}
-	.closeButton {
-		padding: 0 0 40px 40px;
-		font-size: 14px;
-	}
-	.open {
-		padding: 10 20px 10px 20px;
-	}
-	.bottomBar {
-		display: none;
-	}
-	.innerContainer{
-		height: calc(100% - 40px);
-	}
-	.topBar {
-		height: 30px;
-	}
-	.breweryBox {
-		height: 60px;
-	}
-	.toggle {
-		width: 100%;
-		height: 100%;
-		font-size: 10px;
-		font-weight: 400;
-	}
 }
+
 
 
 @media screen and (min-width: 581px) {
@@ -572,6 +501,9 @@ a.info:hover {
 	.breweryDetailName {
 		font-size: 14px;
 	}
+	.markerName {
+		font-size: 13px;
+	}
 	.info {
 		font-size: 12px;
 	}
@@ -637,6 +569,9 @@ a.info:hover {
 		height: 30px;
 	}
 	.breweryDetailName {
+		font-size: 14px;
+	}
+	.markerName {
 		font-size: 14px;
 	}
 	.info {
