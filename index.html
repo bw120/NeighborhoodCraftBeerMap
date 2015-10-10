@@ -161,7 +161,7 @@
 				                <a href="#" class="noWrap breweryButton">
 
 				                    <div class="bLogoContainer" >
-				                    	<img class="bLogo" data-bind="attr: { src: $parent.logos()[$index()], alt: name }">
+				                    	<img class="bLogo" data-bind="attr: { src: $parent.logos()[index], alt: name }">
 				                    </div>
 				                    <div class="breweryName breweryButton" data-bind="text: name"></div>
 				                </a>
@@ -169,7 +169,7 @@
 					    	<div class="breweryItem mobile" data-bind="click: $root.openDetails_mobile">
 				                <a href="#" class="noWrap breweryButton">
 				                    <div class="bLogoContainer" >
-				                    	<img class="bLogo" data-bind="attr: { src: $parent.logos()[$index()], alt: name }">
+				                    	<img class="bLogo" data-bind="attr: { src: $parent.logos()[index], alt: name }">
 				                    </div>
 				                    <div class="breweryName breweryButton" data-bind="text: name"></div>
 				                </a>
