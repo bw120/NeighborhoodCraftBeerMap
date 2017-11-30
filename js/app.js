@@ -1,26 +1,33 @@
 //functions to pull data from API's. Saves data to local storage.
 
+arr = [1, 2, 3, 4];
+arr[arr.length ] = 5;
+
 //Foursquare API
 var getFsqr = function(venues) {
   'use strict';
   var self = this;
+
   self.failed = ko.observable(true);  //variable gets sets to false when API info becomes available
   self.fSqrdata = ko.observableArray();
 
     //check if info is in local storage.
     if(localStorage && localStorage.getItem(venues)) {
+
       //pull from storage and parse JSON
       self.fSqrdata(JSON.parse(localStorage.getItem(venues)));
+
       self.failed(false);
 
 
     //if not in local storage submit ajax reques
     } else {
       //set up URL for Ajax request
-      var theURL = "https://api.foursquare.com/v2/venues/" + venues + "?client_id=V5XZKQRSRXGVGCGN5U3YIFCXTIAZWCZA01V3U5ICI4KRNXOX&client_secret=0ATJHEHUGP41GLOHJJS4ACJC3ENKG311BRW2KR510Y2FPSPY&v=20130815";
+      var theURL = "https://api.foursquare.com/v2/venues/" + venues + "?client_id=V5XZKQRSRXGVGCGN5U3YIFCXTIAZWCZA01V3U5ICI4KRNXOX&client_secret=0ATJHEHUGP41GLOHJJS4ACJC3ENKG311BRW2KR510Y2FPSPY&v=20161016";
 
       //send AJAX request
       $.getJSON(theURL, function(data){
+
         self.failed(false);
         self.fSqrdata(data.response.venue);
 
@@ -73,10 +80,9 @@ var getUntppdInfo = function(brewID) {
 };
 
 //map
-var Map = function() {
-
+var initMap = function() {
   //default bounds
-  this.mapBounds = new google.maps.LatLng(42.3600825, -71.05888010000001);
+  var mapBounds = new google.maps.LatLng(42.3600825, -71.05888010000001);
   //set up map style options
   var customMapType = new google.maps.StyledMapType([
     {
@@ -107,7 +113,7 @@ var Map = function() {
 
   //set up map options
   var mapOptions = {
-    center: this.mapBounds,
+    center: mapBounds,
     zoom: 14,
     mapTypeControl: false,
     zoomControl: true,
@@ -118,12 +124,12 @@ var Map = function() {
   };
 
   //initialize the map
-  this.map = new google.maps.Map(document.getElementById("map"), mapOptions) ;
-  this.map.mapTypes.set(customMapTypeId, customMapType);
-  this.map.setMapTypeId(customMapTypeId);
+  map = new google.maps.Map(document.getElementById("map"), mapOptions) ;
+  map.mapTypes.set(customMapTypeId, customMapType);
+  map.setMapTypeId(customMapTypeId);
 
-  //checks if map has loaded
-  google.maps.event.addListenerOnce(this.map, 'idle', function(){
+  // //checks if map has loaded
+  google.maps.event.addListenerOnce(map, 'idle', function(){
     vm.mapLoaded(true); //updates the observable in the viewModel
   });
 
@@ -160,10 +166,10 @@ var beerMapViewModel = function() {
   //list and details window covering up portions of the map
   var getOffsetPoint = function (latlng, offsetx, offsety) {
 
-    var scale = Math.pow(2, map.map.getZoom());
+    var scale = Math.pow(2, map.getZoom());
 
-    if (map.map.getProjection()) {
-      var wcCenter = map.map.getProjection().fromLatLngToPoint(latlng);
+    if (map.getProjection()) {
+      var wcCenter = map.getProjection().fromLatLngToPoint(latlng);
       var pOffset = new google.maps.Point((offsetx/scale) || 0, (offsety/scale) || 0);
 
       var wcNewCenter = new google.maps.Point(
@@ -171,7 +177,7 @@ var beerMapViewModel = function() {
         wcCenter.y - pOffset.y
       );
 
-      var newCenter = map.map.getProjection().fromPointToLatLng(wcNewCenter);
+      var newCenter = map.getProjection().fromPointToLatLng(wcNewCenter);
       return newCenter;
     } else {
       return latlng;
@@ -187,7 +193,7 @@ var beerMapViewModel = function() {
     var mostEast = data[0].location.lng;
     var mostSouth = data[0].location.lat;
     var newBounds = new google.maps.LatLngBounds();
-    map.map.setZoom(9);
+    map.setZoom(9);
 
     if (data.length > 0) {
 
@@ -219,10 +225,10 @@ var beerMapViewModel = function() {
 
       newBounds.extend(getOffsetPoint(offsetPoint, xOffset, yOffset));
 
-      map.map.fitBounds(newBounds);
+      map.fitBounds(newBounds);
 
 
-      if (map.map.getZoom() > maxZoom) { map.map.setZoom(maxZoom);} //make sure it doesn't zoom in too far
+      if (map.getZoom() > maxZoom) { map.setZoom(maxZoom);} //make sure it doesn't zoom in too far
     }
 
     //set map bounds to be referenced later
@@ -253,7 +259,7 @@ var beerMapViewModel = function() {
       for (i = 0; i < self.brewData().venues.length; i++) {
         markerArr.push( new google.maps.Marker({
           position: {lat: self.brewData().venues[i].location.lat, lng: self.brewData().venues[i].location.lng},
-          map: map.map,
+          map: map,
           title: String(i) //set title as the key in breweryInfo array so it is easier to pass into map InfoWindow
           }));
       }
@@ -281,9 +287,9 @@ var beerMapViewModel = function() {
         self.openSummary(venues[marker.getTitle()]); //display on summary window
       }
       infowindow.setContent(markerContent(venues[marker.getTitle()])); //set content
-      infowindow.open(map.map, marker); //open info window
+      infowindow.open(map, marker); //open info window
       var xOffset = (self.listView() === true) ? -125 : "0";
-      map.map.panTo(getOffsetPoint(marker.getPosition(), xOffset)); //center map on marker
+      map.panTo(getOffsetPoint(marker.getPosition(), xOffset)); //center map on marker
       animateMarker(marker); //make marker bounce
   };
 
@@ -313,7 +319,7 @@ var beerMapViewModel = function() {
       markers[i].setMap(null);
     }
     for (var n = 0; n < markersToShow.length; n++) {
-      markers[markersToShow[n]].setMap(map.map);
+      markers[markersToShow[n]].setMap(map);
     }
   };
 
@@ -348,7 +354,7 @@ var beerMapViewModel = function() {
     //open map marker infowindow
     openInfoWindow(self.mapMarkers()[self.detailsIndex()]);
     setBounds([data]); //set bounds to just this one item
-    map.map.setZoom(13); //zoom in
+    map.setZoom(13); //zoom in
   };
 
   //open summary window and update index of item to be shown
@@ -455,7 +461,7 @@ var beerMapViewModel = function() {
       //reset bounds based on search results
       setBounds(searchMatches);
       if (self.detailsOpen() === false ) {
-        map.map.setCenter(getOffsetPoint(mapBounds.getCenter(), "-100"));
+        map.setCenter(getOffsetPoint(mapBounds.getCenter(), "-100"));
       }
 
     }
@@ -495,6 +501,3 @@ var vm = new beerMapViewModel();
 ko.applyBindings(vm);
 
 var map;
-function initMap() {
-  map = new Map();
-}
